@@ -29,167 +29,145 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Exception holding an aggregation of multiple exceptions which were collected.
  */
-class AggregatedException
-    extends RuntimeException
-{
+class AggregatedException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
+
+
+  /**
+   * Builder for AggregatedException
+   */
+  static class Builder {
 
     /**
-     * Builder for AggregatedException
+     * list of causes for the aggregated exception.
      */
-    static class Builder
-    {
-
-        /**
-         * list of causes for the aggregated exception.
-         */
-        private List<Throwable> causes = new ArrayList<Throwable>();
-
-        /**
-         * Adds an exception to the list of aggregated exceptions.
-         *
-         * @param cause the exception to add
-         */
-        void add( Throwable cause )
-        {
-            causes.add( checkNotNull( cause, "cause is mandatory!" ) );
-        }
-
-        /**
-         * Throws a runtime exception if the builder has causes.
-         *
-         * @param msg the message of the aggregated exception.
-         */
-        void throwRuntimeExceptionIfHasCauses( String msg )
-        {
-            try
-            {
-                if ( !causes.isEmpty() )
-                {
-                    throw getRuntimeException( msg );
-                }
-            }
-            finally
-            {
-                causes = null;
-            }
-        }
-
-        /**
-         * Converts the collected causes into a runtime exception
-         *
-         * @param msg the message of the aggregated exception.
-         * @return the exception to throw
-         */
-        private RuntimeException getRuntimeException( String msg )
-        {
-            if ( causes.size() == 1 )
-            {
-                final Throwable cause = causes.get( 0 );
-                if ( cause instanceof RuntimeException )
-                {
-                    return (RuntimeException) cause;
-                }
-            }
-            return new AggregatedException( msg, causes.toArray( new Throwable[causes.size()] ) );
-        }
-    }
+    private List<Throwable> causes = new ArrayList<Throwable>();
 
     /**
-     * all the underlying causes for this aggregated exception.
-     */
-    private final Throwable[] causes;
-
-    /**
-     * number of causes for this aggregated exceptions.
-     */
-    private final int numCauses;
-
-    /**
-     * Constructor.
+     * Adds an exception to the list of aggregated exceptions.
      *
-     * @param message the message
-     * @param causes  all the causes
+     * @param cause the exception to add
      */
-    private AggregatedException( String message, Throwable[] causes )
-    {
-        super( message );
-        this.causes = causes;
-        this.numCauses = this.causes.length;
+    void add(Throwable cause) {
+      causes.add(checkNotNull(cause, "cause is mandatory!"));
     }
 
     /**
-     * @return the causes which lead to this exception
+     * Throws a runtime exception if the builder has causes.
+     *
+     * @param msg the message of the aggregated exception.
      */
-    public Throwable[] getCauses()
-    {
-        return causes.clone();
-    }
-
-    /**
-     * @return the number of causes collected into this exception
-     */
-    public int getNumCauses()
-    {
-        return numCauses;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void printStackTrace( PrintStream s )
-    {
-        synchronized ( s )
-        {
-
-            s.println( this );
-            StackTraceElement[] trace = getStackTrace();
-            for ( final StackTraceElement aTrace : trace )
-            {
-                s.println( "\tat " + aTrace );
-            }
-
-            for ( int i = 0; i < numCauses; i++ )
-            {
-                s.println( "Cause " + ( i + 1 ) + ":" );
-                causes[i].printStackTrace( s );
-            }
+    void throwRuntimeExceptionIfHasCauses(String msg) {
+      try {
+        if (!causes.isEmpty()) {
+          throw getRuntimeException(msg);
         }
+      } finally {
+        causes = null;
+      }
     }
 
     /**
-     * {@inheritDoc}
+     * Converts the collected causes into a runtime exception
+     *
+     * @param msg the message of the aggregated exception.
+     * @return the exception to throw
      */
-    @Override
-    public void printStackTrace( PrintWriter s )
-    {
-        synchronized ( s )
-        {
-
-            s.println( this );
-            StackTraceElement[] trace = getStackTrace();
-            for ( final StackTraceElement aTrace : trace )
-            {
-                s.println( "\tat " + aTrace );
-            }
-
-            for ( int i = 0; i < numCauses; i++ )
-            {
-                s.println( "Cause " + ( i + 1 ) + ":" );
-                causes[i].printStackTrace( s );
-            }
+    private RuntimeException getRuntimeException(String msg) {
+      if (causes.size() == 1) {
+        final Throwable cause = causes.get(0);
+        if (cause instanceof RuntimeException) {
+          return (RuntimeException) cause;
         }
+      }
+      return new AggregatedException(msg, causes.toArray(new Throwable[causes.size()]));
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString()
-    {
-        return super.toString() + " (caused by " + numCauses + " causes)";
+
+  /**
+   * all the underlying causes for this aggregated exception.
+   */
+  private final Throwable[] causes;
+
+  /**
+   * number of causes for this aggregated exceptions.
+   */
+  private final int numCauses;
+
+  /**
+   * Constructor.
+   *
+   * @param message the message
+   * @param causes  all the causes
+   */
+  private AggregatedException(String message, Throwable[] causes) {
+    super(message);
+    this.causes = causes;
+    this.numCauses = this.causes.length;
+  }
+
+  /**
+   * @return the causes which lead to this exception
+   */
+  public Throwable[] getCauses() {
+    return causes.clone();
+  }
+
+  /**
+   * @return the number of causes collected into this exception
+   */
+  public int getNumCauses() {
+    return numCauses;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void printStackTrace(PrintStream s) {
+    synchronized (s) {
+
+      s.println(this);
+      StackTraceElement[] trace = getStackTrace();
+      for (final StackTraceElement aTrace : trace) {
+        s.println("\tat " + aTrace);
+      }
+
+      for (int i = 0; i < numCauses; i++) {
+        s.println("Cause " + (i + 1) + ":");
+        causes[i].printStackTrace(s);
+      }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void printStackTrace(PrintWriter s) {
+    synchronized (s) {
+
+      s.println(this);
+      StackTraceElement[] trace = getStackTrace();
+      for (final StackTraceElement aTrace : trace) {
+        s.println("\tat " + aTrace);
+      }
+
+      for (int i = 0; i < numCauses; i++) {
+        s.println("Cause " + (i + 1) + ":");
+        causes[i].printStackTrace(s);
+      }
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return super.toString() + " (caused by " + numCauses + " causes)";
+  }
 
 }

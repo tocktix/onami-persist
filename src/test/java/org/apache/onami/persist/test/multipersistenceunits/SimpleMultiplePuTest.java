@@ -27,44 +27,43 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class SimpleMultiplePuTest
-    extends BaseMultiplePuTest
-{
+public class SimpleMultiplePuTest extends BaseMultiplePuTest {
 
-    @Override
-    @Before
-    public void setUp()
-    {
-        super.setUp();
-        beginUnitOfWork();
-    }
+  @Override
+  @Before
+  public void setUp() {
+    super.setUp();
+    beginUnitOfWork();
+  }
 
-    @Override
-    @After
-    public void tearDown()
-        throws Exception
-    {
-        endUnitOfWork();
-        super.tearDown();
-    }
+  @Override
+  @After
+  public void tearDown() throws Exception {
+    endUnitOfWork();
+    super.tearDown();
+  }
 
-    @Test
-    public void storeUnitsInTwoPersistenceUnits()
-        throws Exception
-    {
-        // given
-        final TestEntity firstEntity = new TestEntity();
-        final TestEntity secondEntity = new TestEntity();
+  @Test
+  public void storeUnitsInTwoPersistenceUnits() throws Exception {
+    // given
+    final TestEntity firstEntity = new TestEntity();
+    final TestEntity secondEntity = new TestEntity();
 
-        // when
-        firstEmp.get().persist( firstEntity );
-        secondEmp.get().persist( secondEntity );
+    // when
+    firstEmp.get()
+        .persist(firstEntity);
+    secondEmp.get()
+        .persist(secondEntity);
 
-        // then
-        assertNotNull( firstEmp.get().find( TestEntity.class, firstEntity.getId() ) );
-        assertNotNull( secondEmp.get().find( TestEntity.class, secondEntity.getId() ) );
-        assertNull( firstEmp.get().find( TestEntity.class, secondEntity.getId() ) );
-        assertNull( secondEmp.get().find( TestEntity.class, firstEntity.getId() ) );
-    }
+    // then
+    assertNotNull(firstEmp.get()
+        .find(TestEntity.class, firstEntity.getId()));
+    assertNotNull(secondEmp.get()
+        .find(TestEntity.class, secondEntity.getId()));
+    assertNull(firstEmp.get()
+        .find(TestEntity.class, secondEntity.getId()));
+    assertNull(secondEmp.get()
+        .find(TestEntity.class, firstEntity.getId()));
+  }
 
 }

@@ -30,10 +30,9 @@ import java.lang.annotation.Target;
 /**
  * Annotation to mark bindings which are specific for container managed persistence units.
  */
-@Target( { ElementType.PARAMETER } )
-@Retention( RetentionPolicy.RUNTIME )
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
 @Qualifier
 @BindingAnnotation
-@interface ForContainerManaged
-{
+@interface ForContainerManaged {
 }

@@ -25,7 +25,7 @@ import javax.servlet.Filter;
  * Filter for use in container.
  * The filter will start all persistence services upon container start and span a unit of work
  * around every request which is filtered.
- * <p/>
+ * <p>
  * Usage example:
  * <pre>
  *  public class MyModule extends ServletModule {
@@ -37,7 +37,5 @@ import javax.servlet.Filter;
  *  }
  * </pre>
  */
-public interface PersistenceFilter
-    extends Filter
-{
+public interface PersistenceFilter extends Filter {
 }

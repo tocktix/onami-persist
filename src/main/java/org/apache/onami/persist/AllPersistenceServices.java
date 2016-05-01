@@ -19,20 +19,20 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+
 /**
  * Interface for aggregation of multiple {@link PersistenceService PersistenceServices}.
  */
-public interface AllPersistenceServices
-{
+public interface AllPersistenceServices {
 
-    /**
-     * Calls {@link PersistenceService#start()} on all persistence services which are not running.
-     */
-    void startAllStoppedPersistenceServices();
+  /**
+   * Calls {@link PersistenceService#start()} on all persistence services which are not running.
+   */
+  void startAllStoppedPersistenceServices();
 
-    /**
-     * Calls {@link PersistenceService#stop()} on all persistence services.
-     */
-    void stopAllPersistenceServices();
+  /**
+   * Calls {@link PersistenceService#stop()} on all persistence services.
+   */
+  void stopAllPersistenceServices();
 
 }

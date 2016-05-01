@@ -28,10 +28,9 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 
-@Retention( RetentionPolicy.RUNTIME )
-@Target( { FIELD, PARAMETER, METHOD } )
+@Retention(RetentionPolicy.RUNTIME)
+@Target({FIELD, PARAMETER, METHOD})
 @Qualifier
 @BindingAnnotation
-public @interface SecondPU
-{
+public @interface SecondPU {
 }

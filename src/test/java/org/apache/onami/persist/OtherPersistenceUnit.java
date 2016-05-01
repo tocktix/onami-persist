@@ -28,7 +28,8 @@ import java.lang.annotation.Target;
  * Annotation for unit tests.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target( { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD } )
-public @interface OtherPersistenceUnit
-{
+@Target({ElementType.FIELD,
+            ElementType.PARAMETER,
+            ElementType.METHOD})
+public @interface OtherPersistenceUnit {
 }

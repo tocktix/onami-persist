@@ -35,117 +35,110 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link ResourceLocalTransactionFacadeFactory}.
  */
-@RunWith( HierarchicalContextRunner.class )
-public class ResourceLocalTransactionFacadeProviderTest
-{
+@RunWith(HierarchicalContextRunner.class)
+public class ResourceLocalTransactionFacadeProviderTest {
 
-    private ResourceLocalTransactionFacadeFactory sut;
+  private ResourceLocalTransactionFacadeFactory sut;
 
-    private EntityManagerProvider emProvider;
+  private EntityManagerProvider emProvider;
 
-    private EntityManager em;
+  private EntityManager em;
 
-    private EntityTransaction txn;
+  private EntityTransaction txn;
+
+  @Before
+  public void setUp() {
+    // input
+    emProvider = mock(EntityManagerProvider.class);
+
+    // subject under test
+    sut = new ResourceLocalTransactionFacadeFactory(emProvider);
+
+    // environment
+    em = mock(EntityManager.class);
+    doReturn(em).when(emProvider)
+        .get();
+
+    txn = mock(EntityTransaction.class);
+    doReturn(txn).when(em)
+        .getTransaction();
+  }
+
+  public class InnerTransactionTest {
+
+    private TransactionFacade sut;
 
     @Before
-    public void setUp()
-    {
-        // input
-        emProvider = mock( EntityManagerProvider.class );
-
-        // subject under test
-        sut = new ResourceLocalTransactionFacadeFactory( emProvider );
-
-        // environment
-        em = mock( EntityManager.class );
-        doReturn( em ).when( emProvider ).get();
-
-        txn = mock( EntityTransaction.class );
-        doReturn( txn ).when( em ).getTransaction();
+    public void setUp() {
+      doReturn(true).when(txn)
+          .isActive();
+      sut = ResourceLocalTransactionFacadeProviderTest.this.sut.createTransactionFacade();
     }
 
-    public class InnerTransactionTest
-    {
+    @Test
+    public void beginShouldDoNothing() {
+      sut.begin();
 
-        private TransactionFacade sut;
-
-        @Before
-        public void setUp()
-        {
-            doReturn( true ).when( txn ).isActive();
-            sut = ResourceLocalTransactionFacadeProviderTest.this.sut.createTransactionFacade();
-        }
-
-        @Test
-        public void beginShouldDoNothing()
-        {
-            sut.begin();
-
-            verify( txn, never() ).begin();
-        }
-
-        @Test
-        public void commitShouldDoNothing()
-        {
-            sut.commit();
-
-            verify( txn, never() ).commit();
-        }
-
-        @Test
-        public void rollbackShouldSetRollbackOnlyFlag()
-        {
-            sut.rollback();
-
-            verify( txn ).setRollbackOnly();
-        }
+      verify(txn, never()).begin();
     }
 
-    public class OuterTransactionTest
-    {
+    @Test
+    public void commitShouldDoNothing() {
+      sut.commit();
 
-        private TransactionFacade sut;
-
-        @Before
-        public void setUp()
-        {
-            doReturn( false ).when( txn ).isActive();
-            sut = ResourceLocalTransactionFacadeProviderTest.this.sut.createTransactionFacade();
-        }
-
-        @Test
-        public void beginShouldBeginTransaction()
-        {
-            sut.begin();
-
-            verify( txn ).begin();
-        }
-
-        @Test
-        public void commitShouldCommitTransaction()
-        {
-            sut.commit();
-
-            verify( txn ).commit();
-        }
-
-        @Test
-        public void commitShouldRollbackTransactionIfMarkedAsRollbackOnly()
-        {
-            doReturn( true ).when( txn ).getRollbackOnly();
-
-            sut.commit();
-
-            verify( txn ).rollback();
-        }
-
-        @Test
-        public void rollbackShouldRollbackTransaction()
-        {
-            sut.rollback();
-
-            verify( txn ).rollback();
-        }
+      verify(txn, never()).commit();
     }
+
+    @Test
+    public void rollbackShouldSetRollbackOnlyFlag() {
+      sut.rollback();
+
+      verify(txn).setRollbackOnly();
+    }
+  }
+
+
+  public class OuterTransactionTest {
+
+    private TransactionFacade sut;
+
+    @Before
+    public void setUp() {
+      doReturn(false).when(txn)
+          .isActive();
+      sut = ResourceLocalTransactionFacadeProviderTest.this.sut.createTransactionFacade();
+    }
+
+    @Test
+    public void beginShouldBeginTransaction() {
+      sut.begin();
+
+      verify(txn).begin();
+    }
+
+    @Test
+    public void commitShouldCommitTransaction() {
+      sut.commit();
+
+      verify(txn).commit();
+    }
+
+    @Test
+    public void commitShouldRollbackTransactionIfMarkedAsRollbackOnly() {
+      doReturn(true).when(txn)
+          .getRollbackOnly();
+
+      sut.commit();
+
+      verify(txn).rollback();
+    }
+
+    @Test
+    public void rollbackShouldRollbackTransaction() {
+      sut.rollback();
+
+      verify(txn).rollback();
+    }
+  }
 
 }

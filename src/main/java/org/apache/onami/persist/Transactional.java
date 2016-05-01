@@ -32,12 +32,12 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a method or class to be executed within a transaction.
- * <p/>
+ * <p>
  * This will span a new transaction around the method unless there is already a running transaction.
  * In the case that there is a running transaction no new transaction is started.
  * If a rollback happens for a method which did not start the transaction the already existing
  * transaction will be marked as rollbackOnly.
- * <p/>
+ * <p>
  * Guice uses AOP to enhance a method annotated with {@link Transactional @Transactional} with a wrapper.
  * This means the {@link Transactional @Transactional} only works as expected when:
  * <ul>
@@ -51,27 +51,26 @@ import java.lang.annotation.Target;
  * </li>
  * </ul>
  */
-@Target( { ElementType.METHOD, ElementType.TYPE } )
-@Retention( RetentionPolicy.RUNTIME )
+@Target({ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Transactional
-{
+public @interface Transactional {
 
-    /**
-     * A List of annotations for persistence units on which to start a transaction.
-     * Default is on all persistence units.
-     */
-    Class<? extends Annotation>[] onUnits() default { };
+  /**
+   * A List of annotations for persistence units on which to start a transaction.
+   * Default is on all persistence units.
+   */
+  Class<? extends Annotation>[] onUnits() default {};
 
-    /**
-     * A list of exceptions to rollback on. Default is {@link RuntimeException}.
-     */
-    Class<? extends Exception>[] rollbackOn() default RuntimeException.class;
+  /**
+   * A list of exceptions to rollback on. Default is {@link RuntimeException}.
+   */
+  Class<? extends Exception>[] rollbackOn() default RuntimeException.class;
 
-    /**
-     * A list of exceptions to <b>not<b> rollback on. Use this to exclude one ore more subclasses of
-     * the exceptions defined in rollbackOn(). Default is none.
-     */
-    Class<? extends Exception>[] ignore() default { };
+  /**
+   * A list of exceptions to <b>not<b> rollback on. Use this to exclude one ore more subclasses of
+   * the exceptions defined in rollbackOn(). Default is none.
+   */
+  Class<? extends Exception>[] ignore() default {};
 
 }

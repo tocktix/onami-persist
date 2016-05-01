@@ -30,79 +30,70 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * container managed persistence units.
  */
 @Singleton
-class ContainerManagedEntityManagerFactoryProvider
-    implements EntityManagerFactoryProvider, PersistenceService
-{
+class ContainerManagedEntityManagerFactoryProvider implements EntityManagerFactoryProvider, PersistenceService {
 
-    /**
-     * The source for retrieving the entity manager factory instance.
-     */
-    private final EntityManagerFactorySource emfSource;
+  /**
+   * The source for retrieving the entity manager factory instance.
+   */
+  private final EntityManagerFactorySource emfSource;
 
-    /**
-     * Currently active entity manager factory.
-     * Is {@code null} when the persistence service is not running.
-     */
-    private EntityManagerFactory emf;
+  /**
+   * Currently active entity manager factory.
+   * Is {@code null} when the persistence service is not running.
+   */
+  private EntityManagerFactory emf;
 
-    /**
-     * Constructor.
-     *
-     * @param emfSource the source for the  {@link EntityManagerFactory}. Must not be {@code null}.
-     */
-    @Inject
-    ContainerManagedEntityManagerFactoryProvider( EntityManagerFactorySource emfSource )
-    {
-        this.emfSource = checkNotNull( emfSource, "emfSource is mandatory!" );
+  /**
+   * Constructor.
+   *
+   * @param emfSource the source for the  {@link EntityManagerFactory}. Must not be {@code null}.
+   */
+  @Inject
+  ContainerManagedEntityManagerFactoryProvider(EntityManagerFactorySource emfSource) {
+    this.emfSource = checkNotNull(emfSource, "emfSource is mandatory!");
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public EntityManagerFactory get() {
+    if (isRunning()) {
+      return emf;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public EntityManagerFactory get()
-    {
-        if ( isRunning() )
-        {
-            return emf;
-        }
+    throw new IllegalStateException("PersistenceService is not running.");
+  }
 
-        throw new IllegalStateException( "PersistenceService is not running." );
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public void start() {
+    if (isRunning()) {
+      throw new IllegalStateException("PersistenceService is already running.");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public void start()
-    {
-        if ( isRunning() )
-        {
-            throw new IllegalStateException( "PersistenceService is already running." );
-        }
+    emf = emfSource.getEntityManagerFactory();
+  }
 
-        emf = emfSource.getEntityManagerFactory();
-    }
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public boolean isRunning() {
+    return null != emf;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public boolean isRunning()
-    {
-        return null != emf;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public void stop()
-    {
-        emf = null;
-        // the entity manager factory must NOT be closed:
-        // - it was created by the container and it is therefore the responsibility of the container to close it
-        // - we cannot know if another part of the application has obtained the same instance
-    }
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public void stop() {
+    emf = null;
+    // the entity manager factory must NOT be closed:
+    // - it was created by the container and it is therefore the responsibility of the container to close it
+    // - we cannot know if another part of the application has obtained the same instance
+  }
 
 }

@@ -32,68 +32,58 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Implementation of {@link PersistenceFilter}.
  */
-class PersistenceFilterImpl
-    implements PersistenceFilter
-{
+class PersistenceFilterImpl implements PersistenceFilter {
 
-    /**
-     * Container of all known persistence services.
-     */
-    private final AllPersistenceServices allPersistenceServices;
+  /**
+   * Container of all known persistence services.
+   */
+  private final AllPersistenceServices allPersistenceServices;
 
-    /**
-     * Container of all known units of work.
-     */
-    private final AllUnitsOfWork allUnitsOfWork;
+  /**
+   * Container of all known units of work.
+   */
+  private final AllUnitsOfWork allUnitsOfWork;
 
-    /**
-     * Constructor.
-     *
-     * @param allPersistenceServices container of all known persistence services.
-     * @param allUnitsOfWork container of all known units of work.
-     */
-    @Inject
-    PersistenceFilterImpl( AllPersistenceServices allPersistenceServices, AllUnitsOfWork allUnitsOfWork  )
-    {
-        this.allPersistenceServices = checkNotNull( allPersistenceServices, "allPersistenceServices is mandatory!" );
-        this.allUnitsOfWork = checkNotNull( allUnitsOfWork, "allUnitsOfWork is mandatory!" );
+  /**
+   * Constructor.
+   *
+   * @param allPersistenceServices container of all known persistence services.
+   * @param allUnitsOfWork         container of all known units of work.
+   */
+  @Inject
+  PersistenceFilterImpl(AllPersistenceServices allPersistenceServices, AllUnitsOfWork allUnitsOfWork) {
+    this.allPersistenceServices = checkNotNull(allPersistenceServices, "allPersistenceServices is mandatory!");
+    this.allUnitsOfWork = checkNotNull(allUnitsOfWork, "allUnitsOfWork is mandatory!");
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    try {
+      allUnitsOfWork.beginAllInactiveUnitsOfWork();
+      chain.doFilter(request, response);
+    } finally {
+      allUnitsOfWork.endAllUnitsOfWork();
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain )
-        throws IOException, ServletException
-    {
-        try
-        {
-            allUnitsOfWork.beginAllInactiveUnitsOfWork();
-            chain.doFilter( request, response );
-        }
-        finally
-        {
-            allUnitsOfWork.endAllUnitsOfWork();
-        }
-    }
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    allPersistenceServices.startAllStoppedPersistenceServices();
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public void init( FilterConfig filterConfig )
-        throws ServletException
-    {
-        allPersistenceServices.startAllStoppedPersistenceServices();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    // @Override
-    public void destroy()
-    {
-        allPersistenceServices.stopAllPersistenceServices();
-    }
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public void destroy() {
+    allPersistenceServices.stopAllPersistenceServices();
+  }
 
 }

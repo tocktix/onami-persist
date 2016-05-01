@@ -30,21 +30,17 @@ import org.apache.onami.persist.test.transaction.testframework.exceptions.TestEx
  * - never roll back.
  * - throw a new {@link RuntimeTestException}.
  */
-public class TaskRollingBackOnNoneThrowingRuntimeTestException
-    extends TransactionalTask
-{
+public class TaskRollingBackOnNoneThrowingRuntimeTestException extends TransactionalTask {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional( ignore = Exception.class )
-    public void doTransactional()
-        throws TestException, RuntimeTestException
-    {
-        storeEntity( new TestEntity() );
-        doOtherTasks();
-        throw new RuntimeTestException( getClass().getSimpleName() );
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @Transactional(ignore = Exception.class)
+  public void doTransactional() throws TestException, RuntimeTestException {
+    storeEntity(new TestEntity());
+    doOtherTasks();
+    throw new RuntimeTestException(getClass().getSimpleName());
+  }
 
 }

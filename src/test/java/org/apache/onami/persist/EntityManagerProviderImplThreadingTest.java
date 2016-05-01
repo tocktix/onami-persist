@@ -41,85 +41,73 @@ import static org.mockito.Mockito.verify;
  * Test for {@link org.apache.onami.persist.EntityManagerProviderImpl}.
  * This class tests the behavior of the impl in the context of multiple threads.
  */
-public class EntityManagerProviderImplThreadingTest
-{
+public class EntityManagerProviderImplThreadingTest {
 
-    private EntityManagerProviderImpl sut;
+  private EntityManagerProviderImpl sut;
 
-    private EntityManagerFactory emf;
+  private EntityManagerFactory emf;
 
-    @Before
-    public void setUp()
-    {
-        // input
-        final EntityManagerFactoryProvider emfProvider = mock( EntityManagerFactoryProvider.class );
+  @Before
+  public void setUp() {
+    // input
+    final EntityManagerFactoryProvider emfProvider = mock(EntityManagerFactoryProvider.class);
 
-        // subject under test
-        sut = new EntityManagerProviderImpl( emfProvider, null );
+    // subject under test
+    sut = new EntityManagerProviderImpl(emfProvider, null);
 
-        // helpers
-        emf = mock( EntityManagerFactory.class );
-        doReturn( emf ).when( emfProvider ).get();
+    // helpers
+    emf = mock(EntityManagerFactory.class);
+    doReturn(emf).when(emfProvider)
+        .get();
 
-        doAnswer( new Answer()
-        {
-            public Object answer( InvocationOnMock invocation )
-                throws Throwable
-            {
-                return mock( EntityManager.class );
-            }
-        } ).when( emf ).createEntityManager();
-    }
+    doAnswer(new Answer() {
+      public Object answer(InvocationOnMock invocation) throws Throwable {
+        return mock(EntityManager.class);
+      }
+    }).when(emf)
+        .createEntityManager();
+  }
 
-    @Test
-    public void beginShouldBeCallableFromMultipleThreads()
-    {
-        for ( int i = 0; i < 5; i++ )
-        {
-            new Thread( new Runnable()
-            {
-                public void run()
-                {
-                    assertThat( sut.isActive(), is( false ) );
+  @Test
+  public void beginShouldBeCallableFromMultipleThreads() {
+    for (int i = 0; i < 5; i++) {
+      new Thread(new Runnable() {
+        public void run() {
+          assertThat(sut.isActive(), is(false));
 
-                    sut.begin();
+          sut.begin();
 
-                    assertThat( sut.isActive(), is( true ) );
-                }
-            } ).start();
+          assertThat(sut.isActive(), is(true));
         }
+      }).start();
     }
+  }
 
-    @Test
-    public void getShouldReturnTheSameInstanceInTheSameThread()
-        throws Exception
-    {
-        final int numThreads = 5;
-        final CountDownLatch latch = new CountDownLatch( numThreads );
-        for ( int i = 0; i < numThreads; i++ )
-        {
-            new Thread( new Runnable()
-            {
-                public void run()
-                {
-                    sut.begin();
+  @Test
+  public void getShouldReturnTheSameInstanceInTheSameThread() throws Exception {
+    final int numThreads = 5;
+    final CountDownLatch latch = new CountDownLatch(numThreads);
+    for (int i = 0; i < numThreads; i++) {
+      new Thread(new Runnable() {
+        public void run() {
+          sut.begin();
 
-                    final EntityManager em1 = sut.get();
-                    final EntityManager em2 = sut.get();
-                    final EntityManager em3 = sut.get();
-                    final EntityManager em4 = sut.get();
+          final EntityManager em1 = sut.get();
+          final EntityManager em2 = sut.get();
+          final EntityManager em3 = sut.get();
+          final EntityManager em4 = sut.get();
 
-                    latch.countDown();
+          latch.countDown();
 
-                    assertTrue( em1 == em2 );
-                    assertTrue( em1 == em3 );
-                    assertTrue( em1 == em4 );
-                }
-            } ).start();
+          assertTrue(em1 == em2);
+          assertTrue(em1 == em3);
+          assertTrue(em1 == em4);
         }
-
-        latch.await();
-        verify( emf, times( numThreads ) ).createEntityManager();
+      }).start();
     }
+
+    latch.await();
+    verify(emf, times(numThreads)).createEntityManager();
+  }
 
 }

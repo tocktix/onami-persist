@@ -44,198 +44,182 @@ import org.junit.Test;
  * Tests running a single non nested transaction.
  * The test make us of the testframework. For every test a new Injector is created.
  */
-public class SingleTransactionTest
-{
+public class SingleTransactionTest {
 
-    private Injector injector;
+  private Injector injector;
 
-    private TransactionalWorker worker;
+  private TransactionalWorker worker;
 
-    @Before
-    public void setUp()
-    {
-        final PersistenceModule pm = createPersistenceModuleForTest();
-        injector = Guice.createInjector( pm );
+  @Before
+  public void setUp() {
+    final PersistenceModule pm = createPersistenceModuleForTest();
+    injector = Guice.createInjector(pm);
 
-        //startup persistence
-        injector.getInstance( PersistenceService.class ).start();
-        worker = injector.getInstance( TransactionalWorker.class );
-    }
+    //startup persistence
+    injector.getInstance(PersistenceService.class)
+        .start();
+    worker = injector.getInstance(TransactionalWorker.class);
+  }
 
-    private PersistenceModule createPersistenceModuleForTest()
-    {
-        return new PersistenceModule()
-        {
+  private PersistenceModule createPersistenceModuleForTest() {
+    return new PersistenceModule() {
 
-            @Override
-            protected void configurePersistence()
-            {
-                bindApplicationManagedPersistenceUnit( "testUnit" );
-            }
-        };
-    }
+      @Override
+      protected void configurePersistence() {
+        bindApplicationManagedPersistenceUnit("testUnit");
+      }
+    };
+  }
 
-    @After
-    public void tearDown()
-    {
-        injector.getInstance( PersistenceService.class ).stop();
-        injector = null;
-    }
+  @After
+  public void tearDown() {
+    injector.getInstance(PersistenceService.class)
+        .stop();
+    injector = null;
+  }
 
-    @Test
-    public void testTaskRollingBackOnAnyThrowingNone()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnAnyThrowingNone.class );
+  @Test
+  public void testTaskRollingBackOnAnyThrowingNone() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnAnyThrowingNone.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnAnyThrowingRuntimeTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnAnyThrowingRuntimeTestException.class );
+  @Test
+  public void testTaskRollingBackOnAnyThrowingRuntimeTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnAnyThrowingRuntimeTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertNoEntityHasBeenPersisted();
-    }
+    // then
+    worker.assertNoEntityHasBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnAnyThrowingTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnAnyThrowingTestException.class );
+  @Test
+  public void testTaskRollingBackOnAnyThrowingTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnAnyThrowingTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertNoEntityHasBeenPersisted();
-    }
+    // then
+    worker.assertNoEntityHasBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnNoneThrowingNone()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnNoneThrowingNone.class );
+  @Test
+  public void testTaskRollingBackOnNoneThrowingNone() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnNoneThrowingNone.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnNoneThrowingRuntimeTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnNoneThrowingRuntimeTestException.class );
+  @Test
+  public void testTaskRollingBackOnNoneThrowingRuntimeTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnNoneThrowingRuntimeTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnNoneThrowingTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnNoneThrowingTestException.class );
+  @Test
+  public void testTaskRollingBackOnNoneThrowingTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnNoneThrowingTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnRuntimeTestExceptionThrowingNone()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class );
+  @Test
+  public void testTaskRollingBackOnRuntimeTestExceptionThrowingNone() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class );
+  @Test
+  public void testTaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertNoEntityHasBeenPersisted();
-    }
+    // then
+    worker.assertNoEntityHasBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnRuntimeTestExceptionThrowingTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class );
+  @Test
+  public void testTaskRollingBackOnRuntimeTestExceptionThrowingTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnTestExceptionThrowingNone()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnTestExceptionThrowingNone.class );
+  @Test
+  public void testTaskRollingBackOnTestExceptionThrowingNone() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnTestExceptionThrowingNone.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnTestExceptionThrowingRuntimeTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class );
+  @Test
+  public void testTaskRollingBackOnTestExceptionThrowingRuntimeTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertAllEntitiesHaveBeenPersisted();
-    }
+    // then
+    worker.assertAllEntitiesHaveBeenPersisted();
+  }
 
-    @Test
-    public void testTaskRollingBackOnTestExceptionThrowingTestException()
-    {
-        // given
-        worker.scheduleTask( TaskRollingBackOnTestExceptionThrowingTestException.class );
+  @Test
+  public void testTaskRollingBackOnTestExceptionThrowingTestException() {
+    // given
+    worker.scheduleTask(TaskRollingBackOnTestExceptionThrowingTestException.class);
 
-        // when
-        worker.doTasks();
+    // when
+    worker.doTasks();
 
-        // then
-        worker.assertNoEntityHasBeenPersisted();
-    }
+    // then
+    worker.assertNoEntityHasBeenPersisted();
+  }
 
 }

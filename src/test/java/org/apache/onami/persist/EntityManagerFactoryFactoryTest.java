@@ -31,39 +31,37 @@ import static org.junit.Assert.assertThat;
 /**
  * Test for {@link EntityManagerFactoryFactory}.
  */
-public class EntityManagerFactoryFactoryTest
-{
+public class EntityManagerFactoryFactoryTest {
 
-    private static final String TEST_KEY = "testKey";
+  private static final String TEST_KEY = "testKey";
 
-    private static final String TEST_VALUE = "testValue";
+  private static final String TEST_VALUE = "testValue";
 
-    private static final String PU_NAME = "testUnit";
+  private static final String PU_NAME = "testUnit";
 
-    private static final String PU_KEY = "hibernate.ejb.persistenceUnitName";
+  private static final String PU_KEY = "hibernate.ejb.persistenceUnitName";
 
-    private EntityManagerFactoryFactory sut;
+  private EntityManagerFactoryFactory sut;
 
-    private Properties properties;
+  private Properties properties;
 
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        properties = new Properties(  );
-        sut = new EntityManagerFactoryFactory( PU_NAME, properties );
-    }
+  @Before
+  public void setUp() throws Exception {
+    properties = new Properties();
+    sut = new EntityManagerFactoryFactory(PU_NAME, properties);
+  }
 
-    @Test
-    public void shouldCreateAnInstanceWithThePassedValues()
-    {
-        // given
-        properties.setProperty( TEST_KEY, TEST_VALUE );
-        // when
-        final EntityManagerFactory result = sut.createApplicationManagedEntityManagerFactory();
-        // then
-        assertThat( result.getProperties().get( PU_KEY ), is( (Object) PU_NAME ) );
-        assertThat( result.getProperties().get( TEST_KEY ), is( (Object) TEST_VALUE ) );
-    }
+  @Test
+  public void shouldCreateAnInstanceWithThePassedValues() {
+    // given
+    properties.setProperty(TEST_KEY, TEST_VALUE);
+    // when
+    final EntityManagerFactory result = sut.createApplicationManagedEntityManagerFactory();
+    // then
+    assertThat(result.getProperties()
+        .get(PU_KEY), is((Object) PU_NAME));
+    assertThat(result.getProperties()
+        .get(TEST_KEY), is((Object) TEST_VALUE));
+  }
 
 }

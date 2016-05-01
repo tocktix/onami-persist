@@ -30,36 +30,34 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Provider fro {@link UserTransaction} which retrieves the value from the JNDI context.
  */
 @Singleton
-class UserTransactionProviderByJndiLookup
-    implements Provider<UserTransaction>
-{
+class UserTransactionProviderByJndiLookup implements Provider<UserTransaction> {
 
-    private final String jndiName;
+  private final String jndiName;
 
-    private final JndiLookupHelper jndiLookupHelper;
+  private final JndiLookupHelper jndiLookupHelper;
 
-    /**
-     * Constructor.
-     *
-     * @param jndiName jndi name of the entity manager factory. Must not be {@code null}.
-     */
-    @Inject
-    UserTransactionProviderByJndiLookup( @UserTransactionJndiName String jndiName, JndiLookupHelper jndiLookupHelper )
-    {
-        this.jndiName = checkNotNull( jndiName, "jndiName is mandatory!" );
-        this.jndiLookupHelper = checkNotNull( jndiLookupHelper, "jndiLookupHelper is mandatory!" );
-    }
+  /**
+   * Constructor.
+   *
+   * @param jndiName jndi name of the entity manager factory. Must not be {@code null}.
+   */
+  @Inject
+  UserTransactionProviderByJndiLookup(
+      @UserTransactionJndiName
+      String jndiName, JndiLookupHelper jndiLookupHelper) {
+    this.jndiName = checkNotNull(jndiName, "jndiName is mandatory!");
+    this.jndiLookupHelper = checkNotNull(jndiLookupHelper, "jndiLookupHelper is mandatory!");
+  }
 
-    /**
-     * Gets a {@link UserTransaction} by looking it up in the JNDI context.
-     *
-     * @return the found entity user transaction
-     * @throws RuntimeException when no user transaction was found.
-     */
-    //@Override
-    public UserTransaction get()
-    {
-        return jndiLookupHelper.doJndiLookup( UserTransaction.class, jndiName );
-    }
+  /**
+   * Gets a {@link UserTransaction} by looking it up in the JNDI context.
+   *
+   * @return the found entity user transaction
+   * @throws RuntimeException when no user transaction was found.
+   */
+  //@Override
+  public UserTransaction get() {
+    return jndiLookupHelper.doJndiLookup(UserTransaction.class, jndiName);
+  }
 
 }

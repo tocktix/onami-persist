@@ -55,384 +55,348 @@ import static org.junit.Assert.fail;
  * Since the test is running a loop the injector is created directly in the test to ensure
  * that for every {@link TestVector} a new injector instance is used.
  */
-public class NestedTransactionTest
-{
+public class NestedTransactionTest {
 
-    /**
-     * All possible combination of {@link org.apache.onami.persist.test.transaction.testframework.TransactionalTask}s
-     * and if they should have been rolled back.
-     */
-    private static final Collection<TestVector> TEST_VECTORS = buildTestVectors(
-        whenFirstTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //                                                  //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+  /**
+   * All possible combination of {@link org.apache.onami.persist.test.transaction.testframework.TransactionalTask}s
+   * and if they should have been rolled back.
+   */
+  private static final Collection<TestVector> TEST_VECTORS = buildTestVectors(
+      whenFirstTaskIs(TaskRollingBackOnAnyThrowingNone.class) //                                                  //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //                                  //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //                                  //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //                                         //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //                                         //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //                                                 //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnNoneThrowingNone.class) //                                                 //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //                                 //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //                                 //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //                                        //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //                                        //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //                                 //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //                                 //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class ) //                 //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class) //                 //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //                        //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //                        //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //                                        //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //                                        //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //                        //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ), //
+      whenFirstTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //                        //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
 
-        whenFirstTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ) //                               //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnAnyThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnNoneThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnNoneThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingNone.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class )//
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingNone.class ) //
-            .expectCommitWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class ) //
-            .expectRollbackWhenSecondTaskIs( TaskRollingBackOnTestExceptionThrowingTestException.class ) //
-    );
+      whenFirstTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class) //                               //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class)//
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
+          .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class) //
+  );
 
 
-    /**
-     * Test which ensures that all combinations of tasks are present.
-     */
-    @Test
-    public void testVectorShouldContainAllCombinations()
-    {
-        Set<TestVector> s = new HashSet<TestVector>();
+  /**
+   * Test which ensures that all combinations of tasks are present.
+   */
+  @Test
+  public void testVectorShouldContainAllCombinations() {
+    Set<TestVector> s = new HashSet<TestVector>();
 
-        s.addAll( TEST_VECTORS );
+    s.addAll(TEST_VECTORS);
 
-        assertThat( s.size(), is( 12 * 12 ) );
+    assertThat(s.size(), is(12 * 12));
+  }
+
+  /**
+   * Test which iterates over ALL possible combinations of inner and outer tasks.
+   */
+  @Test
+  public void testNestedTransactions() {
+    final StringBuilder msg = new StringBuilder();
+    for (TestVector v : TEST_VECTORS) {
+      try {
+        doTestNestedTransaction(v);
+      } catch (AssertionError e) {
+        msg.append("\n");
+        msg.append(e.getMessage());
+      }
+    }
+    if (msg.length() > 0) {
+      fail(msg.toString());
+    }
+  }
+
+  private void doTestNestedTransaction(TestVector testVector) {
+    final PersistenceModule pm = createPersistenceModuleForTest();
+    final Injector injector = Guice.createInjector(pm);
+    final PersistenceService persistService = injector.getInstance(PersistenceService.class);
+    persistService.start();
+    try {
+      doTestNestedTransaction(testVector, injector.getInstance(TransactionalWorker.class));
+    } finally {
+      persistService.stop();
     }
 
-    /**
-     * Test which iterates over ALL possible combinations of inner and outer tasks.
-     */
-    @Test
-    public void testNestedTransactions()
-    {
-        final StringBuilder msg = new StringBuilder();
-        for ( TestVector v : TEST_VECTORS )
-        {
-            try
-            {
-                doTestNestedTransaction( v );
-            }
-            catch ( AssertionError e )
-            {
-                msg.append( "\n" );
-                msg.append( e.getMessage() );
-            }
-        }
-        if ( msg.length() > 0 )
-        {
-            fail( msg.toString() );
-        }
+  }
+
+  private PersistenceModule createPersistenceModuleForTest() {
+    return new PersistenceModule() {
+      @Override
+      protected void configurePersistence() {
+        bindApplicationManagedPersistenceUnit("testUnit");
+      }
+    };
+  }
+
+  private void doTestNestedTransaction(TestVector testVector, TransactionalWorker worker) {
+    // given
+    testVector.scheduleOuterTaskOn(worker);
+    testVector.scheduleInnerTaskOn(worker);
+
+    // when
+    worker.doTasks();
+
+    // then
+    testVector.assertExpectedOutcomeFor(worker);
+  }
+
+
+  private static Collection<TestVector> buildTestVectors(TestVectorsBuilder... factories) {
+    final List<TestVector> result = new ArrayList<TestVector>();
+    for (TestVectorsBuilder factory : factories) {
+      result.addAll(factory.buildTestVectors());
+    }
+    return result;
+  }
+
+  private static TestVectorsBuilder whenFirstTaskIs(Class<? extends TransactionalTask> firstTask) {
+    return new TestVectorsBuilder(firstTask);
+  }
+
+  private abstract static class TestVector {
+    private final Class<? extends TransactionalTask> outerTask;
+
+    private final Class<? extends TransactionalTask> innerTask;
+
+    public TestVector(Class<? extends TransactionalTask> outerTask, Class<? extends TransactionalTask> innerTask) {
+      this.outerTask = outerTask;
+      this.innerTask = innerTask;
     }
 
-    private void doTestNestedTransaction( TestVector testVector )
-    {
-        final PersistenceModule pm = createPersistenceModuleForTest();
-        final Injector injector = Guice.createInjector( pm );
-        final PersistenceService persistService = injector.getInstance( PersistenceService.class );
-        persistService.start();
-        try
-        {
-            doTestNestedTransaction( testVector, injector.getInstance( TransactionalWorker.class ) );
-        }
-        finally
-        {
-            persistService.stop();
-        }
-
+    public void scheduleOuterTaskOn(TransactionalWorker worker) {
+      worker.scheduleTask(outerTask);
     }
 
-    private PersistenceModule createPersistenceModuleForTest()
-    {
-        return new PersistenceModule()
-        {
-            @Override
-            protected void configurePersistence()
-            {
-                bindApplicationManagedPersistenceUnit( "testUnit" );
-            }
-        };
+    public void scheduleInnerTaskOn(TransactionalWorker worker) {
+      worker.scheduleTask(innerTask);
     }
 
-    private void doTestNestedTransaction( TestVector testVector, TransactionalWorker worker )
-    {
-        // given
-        testVector.scheduleOuterTaskOn( worker );
-        testVector.scheduleInnerTaskOn( worker );
+    public abstract void assertExpectedOutcomeFor(TransactionalWorker worker);
 
-        // when
-        worker.doTasks();
-
-        // then
-        testVector.assertExpectedOutcomeFor( worker );
+    @Override
+    public boolean equals(Object obj) {
+      return obj instanceof TestVector && equalsTestVector((TestVector) obj);
     }
 
-
-    private static Collection<TestVector> buildTestVectors( TestVectorsBuilder... factories )
-    {
-        final List<TestVector> result = new ArrayList<TestVector>();
-        for ( TestVectorsBuilder factory : factories )
-        {
-            result.addAll( factory.buildTestVectors() );
-        }
-        return result;
+    private boolean equalsTestVector(TestVector other) {
+      return innerTask.equals(other.innerTask) && outerTask.equals(other.outerTask);
     }
 
-    private static TestVectorsBuilder whenFirstTaskIs( Class<? extends TransactionalTask> firstTask )
-    {
-        return new TestVectorsBuilder( firstTask );
+    @Override
+    public int hashCode() {
+      return 31 * outerTask.hashCode() + innerTask.hashCode();
+    }
+  }
+
+
+  private static class RollingBackTestVector extends TestVector {
+
+    public RollingBackTestVector(Class<? extends TransactionalTask> outerTask,
+        Class<? extends TransactionalTask> innerTask) {
+      super(outerTask, innerTask);
     }
 
-    private abstract static class TestVector
-    {
-        private final Class<? extends TransactionalTask> outerTask;
+    @Override
+    public void assertExpectedOutcomeFor(TransactionalWorker worker) {
+      worker.assertNoEntityHasBeenPersisted();
+    }
+  }
 
-        private final Class<? extends TransactionalTask> innerTask;
 
-        public TestVector( Class<? extends TransactionalTask> outerTask, Class<? extends TransactionalTask> innerTask )
-        {
-            this.outerTask = outerTask;
-            this.innerTask = innerTask;
-        }
+  private static class CommittingTestVector extends TestVector {
 
-        public void scheduleOuterTaskOn( TransactionalWorker worker )
-        {
-            worker.scheduleTask( outerTask );
-        }
-
-        public void scheduleInnerTaskOn( TransactionalWorker worker )
-        {
-            worker.scheduleTask( innerTask );
-        }
-
-        public abstract void assertExpectedOutcomeFor( TransactionalWorker worker );
-
-        @Override
-        public boolean equals( Object obj )
-        {
-            return obj instanceof TestVector && equalsTestVector( (TestVector) obj );
-        }
-
-        private boolean equalsTestVector( TestVector other )
-        {
-            return innerTask.equals( other.innerTask ) && outerTask.equals( other.outerTask );
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return 31 * outerTask.hashCode() + innerTask.hashCode();
-        }
+    public CommittingTestVector(Class<? extends TransactionalTask> outerTask,
+        Class<? extends TransactionalTask> innerTask) {
+      super(outerTask, innerTask);
     }
 
-    private static class RollingBackTestVector
-        extends TestVector
-    {
+    @Override
+    public void assertExpectedOutcomeFor(TransactionalWorker worker) {
+      worker.assertAllEntitiesHaveBeenPersisted();
+    }
+  }
 
-        public RollingBackTestVector( Class<? extends TransactionalTask> outerTask,
-                                      Class<? extends TransactionalTask> innerTask )
-        {
-            super( outerTask, innerTask );
-        }
 
-        @Override
-        public void assertExpectedOutcomeFor( TransactionalWorker worker )
-        {
-            worker.assertNoEntityHasBeenPersisted();
-        }
+  private static class TestVectorsBuilder {
+
+    private final Class<? extends TransactionalTask> firstTask;
+
+    private final List<TestVector> result;
+
+    public TestVectorsBuilder(Class<? extends TransactionalTask> firstTask) {
+      this.firstTask = firstTask;
+      this.result = new ArrayList<TestVector>();
     }
 
-    private static class CommittingTestVector
-        extends TestVector
-    {
-
-        public CommittingTestVector( Class<? extends TransactionalTask> outerTask,
-                                     Class<? extends TransactionalTask> innerTask )
-        {
-            super( outerTask, innerTask );
-        }
-
-        @Override
-        public void assertExpectedOutcomeFor( TransactionalWorker worker )
-        {
-            worker.assertAllEntitiesHaveBeenPersisted();
-        }
+    public TestVectorsBuilder expectCommitWhenSecondTaskIs(Class<? extends TransactionalTask> secondTask) {
+      result.add(new CommittingTestVector(firstTask, secondTask));
+      return this;
     }
 
-    private static class TestVectorsBuilder
-    {
-
-        private final Class<? extends TransactionalTask> firstTask;
-
-        private final List<TestVector> result;
-
-        public TestVectorsBuilder( Class<? extends TransactionalTask> firstTask )
-        {
-            this.firstTask = firstTask;
-            this.result = new ArrayList<TestVector>();
-        }
-
-        public TestVectorsBuilder expectCommitWhenSecondTaskIs( Class<? extends TransactionalTask> secondTask )
-        {
-            result.add( new CommittingTestVector( firstTask, secondTask ) );
-            return this;
-        }
-
-        public TestVectorsBuilder expectRollbackWhenSecondTaskIs( Class<? extends TransactionalTask> secondTask )
-        {
-            result.add( new RollingBackTestVector( firstTask, secondTask ) );
-            return this;
-        }
-
-        public Collection<TestVector> buildTestVectors()
-        {
-            return result;
-        }
+    public TestVectorsBuilder expectRollbackWhenSecondTaskIs(Class<? extends TransactionalTask> secondTask) {
+      result.add(new RollingBackTestVector(firstTask, secondTask));
+      return this;
     }
+
+    public Collection<TestVector> buildTestVectors() {
+      return result;
+    }
+  }
 }

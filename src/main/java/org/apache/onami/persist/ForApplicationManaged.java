@@ -28,9 +28,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation to mark bindings which are specific for application managed persistence units.
  */
-@Target( { ElementType.PARAMETER } )
-@Retention( RetentionPolicy.RUNTIME )
+@Target({ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
 @Qualifier
-@interface ForApplicationManaged
-{
+@interface ForApplicationManaged {
 }

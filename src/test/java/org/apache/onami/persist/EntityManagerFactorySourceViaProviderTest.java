@@ -33,31 +33,29 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link EntityManagerFactorySourceViaProvider}.
  */
-public class EntityManagerFactorySourceViaProviderTest
-{
+public class EntityManagerFactorySourceViaProviderTest {
 
-    private EntityManagerFactorySourceViaProvider sut;
+  private EntityManagerFactorySourceViaProvider sut;
 
-    private Provider<EntityManagerFactory> emfProvider;
+  private Provider<EntityManagerFactory> emfProvider;
 
-    @Before
-    @SuppressWarnings( "unchecked" )
-    public void setUp()
-        throws Exception
-    {
-        emfProvider = mock(Provider.class);
-        sut = new EntityManagerFactorySourceViaProvider( emfProvider );
-    }
+  @Before
+  @SuppressWarnings("unchecked")
+  public void setUp() throws Exception {
+    emfProvider = mock(Provider.class);
+    sut = new EntityManagerFactorySourceViaProvider(emfProvider);
+  }
 
-    @Test
-    public void shouldReturnValueFromProvider() {
-        // given
-        EntityManagerFactory emfDummy = mock(EntityManagerFactory.class);
-        doReturn( emfDummy ).when( emfProvider ).get();
-        // when
-        final EntityManagerFactory result = sut.getEntityManagerFactory();
-        // then
-        assertThat(result, sameInstance(emfDummy));
-    }
+  @Test
+  public void shouldReturnValueFromProvider() {
+    // given
+    EntityManagerFactory emfDummy = mock(EntityManagerFactory.class);
+    doReturn(emfDummy).when(emfProvider)
+        .get();
+    // when
+    final EntityManagerFactory result = sut.getEntityManagerFactory();
+    // then
+    assertThat(result, sameInstance(emfDummy));
+  }
 
 }

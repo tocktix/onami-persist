@@ -29,25 +29,21 @@ import java.util.UUID;
  * The ID will be unique in every run of a test.
  */
 @Entity
-public final class TestEntity
-    implements Serializable
-{
+public final class TestEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private UUID id = UUID.randomUUID();
+  private UUID id = UUID.randomUUID();
 
-    @Id
-    public UUID getId()
-    {
-        return id;
-    }
+  @Id
+  public UUID getId() {
+    return id;
+  }
 
-    @SuppressWarnings( "unused" )
-    // used by the persistence framework
-    private void setId( UUID id )
-    {
-        this.id = id;
-    }
+  @SuppressWarnings("unused")
+  // used by the persistence framework
+  private void setId(UUID id) {
+    this.id = id;
+  }
 
 }

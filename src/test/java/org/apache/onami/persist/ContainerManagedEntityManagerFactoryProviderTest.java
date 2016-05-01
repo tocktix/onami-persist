@@ -36,99 +36,89 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link ContainerManagedEntityManagerFactoryProvider}.
  */
-public class ContainerManagedEntityManagerFactoryProviderTest
-{
+public class ContainerManagedEntityManagerFactoryProviderTest {
 
-    private ContainerManagedEntityManagerFactoryProvider sut;
+  private ContainerManagedEntityManagerFactoryProvider sut;
 
-    private EntityManagerFactory emf;
+  private EntityManagerFactory emf;
 
-    private EntityManagerFactorySource emfSource;
+  private EntityManagerFactorySource emfSource;
 
-    @Before
-    public void setup()
-    {
-        // input
-        emfSource = mock( EntityManagerFactorySource.class );
+  @Before
+  public void setup() {
+    // input
+    emfSource = mock(EntityManagerFactorySource.class);
 
-        // subject under test
-        sut = new ContainerManagedEntityManagerFactoryProvider( emfSource );
+    // subject under test
+    sut = new ContainerManagedEntityManagerFactoryProvider(emfSource);
 
-        // helpers
-        emf = mock( EntityManagerFactory.class );
-        doReturn( emf ).when( emfSource ).getEntityManagerFactory();
-    }
+    // helpers
+    emf = mock(EntityManagerFactory.class);
+    doReturn(emf).when(emfSource)
+        .getEntityManagerFactory();
+  }
 
-    @Test
-    public void isRunningShouldReturnFalseBeforeStarting()
-    {
-        assertThat( sut.isRunning(), is( false ) );
-    }
+  @Test
+  public void isRunningShouldReturnFalseBeforeStarting() {
+    assertThat(sut.isRunning(), is(false));
+  }
 
-    @Test
-    public void stoppingWhenNotRunningShouldDoNothing()
-    {
-        sut.stop();
+  @Test
+  public void stoppingWhenNotRunningShouldDoNothing() {
+    sut.stop();
 
-        assertThat( sut.isRunning(), is( false ) );
-    }
+    assertThat(sut.isRunning(), is(false));
+  }
 
-    @Test
-    public void isRunningShouldReturnTrueAfterStarting()
-    {
-        sut.start();
+  @Test
+  public void isRunningShouldReturnTrueAfterStarting() {
+    sut.start();
 
-        assertThat( sut.isRunning(), is( true ) );
-        verify( emfSource ).getEntityManagerFactory();
-    }
+    assertThat(sut.isRunning(), is(true));
+    verify(emfSource).getEntityManagerFactory();
+  }
 
-    @Test( expected = IllegalStateException.class )
-    public void startingAfterAlreadyStartedShouldThrowException()
-    {
-        sut.start();
-        sut.start();
-    }
+  @Test(expected = IllegalStateException.class)
+  public void startingAfterAlreadyStartedShouldThrowException() {
+    sut.start();
+    sut.start();
+  }
 
-    @Test
-    public void isRunningShouldReturnFalseAfterStartingAndStopping()
-    {
-        sut.start();
-        sut.stop();
+  @Test
+  public void isRunningShouldReturnFalseAfterStartingAndStopping() {
+    sut.start();
+    sut.stop();
 
-        assertThat( sut.isRunning(), is( false ) );
-        verify( emf, never() ).close();
-    }
+    assertThat(sut.isRunning(), is(false));
+    verify(emf, never()).close();
+  }
 
-    @Test
-    public void restartingShouldWork()
-    {
-        sut.start();
-        sut.stop();
-        sut.start();
+  @Test
+  public void restartingShouldWork() {
+    sut.start();
+    sut.stop();
+    sut.start();
 
-        assertThat( sut.isRunning(), is( true ) );
-        verify( emfSource, times( 2 ) ).getEntityManagerFactory();
-        verify( emf, never() ).close();
-    }
+    assertThat(sut.isRunning(), is(true));
+    verify(emfSource, times(2)).getEntityManagerFactory();
+    verify(emf, never()).close();
+  }
 
-    @Test( expected = IllegalStateException.class )
-    public void getShouldThrowExceptionWhenNotStarted()
-    {
-        sut.get();
-    }
+  @Test(expected = IllegalStateException.class)
+  public void getShouldThrowExceptionWhenNotStarted() {
+    sut.get();
+  }
 
-    @Test
-    public void getShouldReturnEmf()
-    {
-        sut.start();
+  @Test
+  public void getShouldReturnEmf() {
+    sut.start();
 
-        assertThat( sut.get(), sameInstance( emf ) );
-    }
+    assertThat(sut.get(), sameInstance(emf));
+  }
 
-    @Test( expected = NullPointerException.class )
-    public void emfSourceIsMandatory()
-    {
-        new ContainerManagedEntityManagerFactoryProvider( null );
-    }
+  @Test(expected = NullPointerException.class)
+  public void emfSourceIsMandatory() {
+    new ContainerManagedEntityManagerFactoryProvider(null);
+  }
 
 }

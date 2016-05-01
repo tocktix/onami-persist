@@ -24,30 +24,27 @@ import java.lang.annotation.Annotation;
 /**
  * Object to hold the annotation of a persistence unit. may contain {@code null}.
  */
-class AnnotationHolder
-{
+class AnnotationHolder {
 
-    /**
-     * The annotation under which to bind current persistence unit.
-     */
-    private final Class<? extends Annotation> annotation;
+  /**
+   * The annotation under which to bind current persistence unit.
+   */
+  private final Class<? extends Annotation> annotation;
 
-    /**
-     * Constructor.
-     *
-     * @param annotation the annotation under which to bind the annotations. May be {@code null}.
-     */
-    AnnotationHolder( Class<? extends Annotation> annotation )
-    {
-        this.annotation = annotation;
-    }
+  /**
+   * Constructor.
+   *
+   * @param annotation the annotation under which to bind the annotations. May be {@code null}.
+   */
+  AnnotationHolder(Class<? extends Annotation> annotation) {
+    this.annotation = annotation;
+  }
 
-    /**
-     * @return the annotation for the current persistence unit. May return {@code null}.
-     */
-    Class<? extends Annotation> getAnnotation()
-    {
-        return annotation;
-    }
+  /**
+   * @return the annotation for the current persistence unit. May return {@code null}.
+   */
+  Class<? extends Annotation> getAnnotation() {
+    return annotation;
+  }
 
 }

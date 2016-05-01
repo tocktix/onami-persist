@@ -30,43 +30,41 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * The sourced instance is looked up via a JNDI call.
  */
 @Singleton
-class EntityManagerFactorySourceByJndiLookup
-    implements EntityManagerFactorySource
-{
+class EntityManagerFactorySourceByJndiLookup implements EntityManagerFactorySource {
 
-    /**
-     * The JNDI name of the persistence unit.
-     */
-    private final String jndiName;
+  /**
+   * The JNDI name of the persistence unit.
+   */
+  private final String jndiName;
 
-    /**
-     * Helper for JNDI lookup.
-     */
-    private final JndiLookupHelper jndiLookupHelper;
+  /**
+   * Helper for JNDI lookup.
+   */
+  private final JndiLookupHelper jndiLookupHelper;
 
-    /**
-     * Constructor.
-     *
-     * @param jndiName         jndi name of the entity manager factory. Must not be {@code null}.
-     * @param jndiLookupHelper the lookup helper. Must not be {@code null}.
-     */
-    @Inject
-    EntityManagerFactorySourceByJndiLookup( @ForContainerManaged String jndiName, JndiLookupHelper jndiLookupHelper )
-    {
-        this.jndiName = checkNotNull( jndiName, "jndiName is mandatory!" );
-        this.jndiLookupHelper = checkNotNull( jndiLookupHelper, "jndiLookupHelper is mandatory!" );
-    }
+  /**
+   * Constructor.
+   *
+   * @param jndiName         jndi name of the entity manager factory. Must not be {@code null}.
+   * @param jndiLookupHelper the lookup helper. Must not be {@code null}.
+   */
+  @Inject
+  EntityManagerFactorySourceByJndiLookup(
+      @ForContainerManaged
+      String jndiName, JndiLookupHelper jndiLookupHelper) {
+    this.jndiName = checkNotNull(jndiName, "jndiName is mandatory!");
+    this.jndiLookupHelper = checkNotNull(jndiLookupHelper, "jndiLookupHelper is mandatory!");
+  }
 
-    /**
-     * Gets a {@link javax.persistence.EntityManagerFactory} by looking it up in the JNDI context.
-     *
-     * @return the found entity manager factory
-     * @throws RuntimeException when no entity manager factory was found.
-     */
-    //@Override
-    public EntityManagerFactory getEntityManagerFactory()
-    {
-        return jndiLookupHelper.doJndiLookup( EntityManagerFactory.class, jndiName );
-    }
+  /**
+   * Gets a {@link javax.persistence.EntityManagerFactory} by looking it up in the JNDI context.
+   *
+   * @return the found entity manager factory
+   * @throws RuntimeException when no entity manager factory was found.
+   */
+  //@Override
+  public EntityManagerFactory getEntityManagerFactory() {
+    return jndiLookupHelper.doJndiLookup(EntityManagerFactory.class, jndiName);
+  }
 
 }

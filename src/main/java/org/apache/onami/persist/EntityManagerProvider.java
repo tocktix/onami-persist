@@ -24,30 +24,28 @@ import javax.persistence.EntityManager;
 
 /**
  * Provider for {@link EntityManager}.
- * <p/>
+ * <p>
  * Even though this class extends the {@link Provider} interface it is not bound as a provider of
  * {@link EntityManager}. The reason for this is that the {@link EntityManager} objects do have a
  * life cycle and should therefore not be stored in instance/member variables.
- * <p/>
+ * <p>
  * The {@link UnitOfWork} defines the life cycle of the {@link EntityManager}. An entity manager
  * will be created when the unit of work is started. It is open and valid for use during the entire
  * unit of work. When the unit of work ends the entity manager is closed and can no longer
  * be used.
- * <p/>
+ * <p>
  * It is a good practice to store this provider in a instance/member variable and only obtain an
  * {@link EntityManager} instance in a method where it is used. This ensures that the method always
  * has access to a valid {@link EntityManager}.
- * <p/>
+ * <p>
  * The {@link EntityManagerProvider} is thread save.
  */
-public interface EntityManagerProvider extends Provider<EntityManager>
-{
+public interface EntityManagerProvider extends Provider<EntityManager> {
 
-    /**
-     * @return the {@link EntityManager}.
-     * @throws IllegalStateException if {@link UnitOfWork#isActive()} returns false.
-     */
-    EntityManager get()
-        throws IllegalStateException;
+  /**
+   * @return the {@link EntityManager}.
+   * @throws IllegalStateException if {@link UnitOfWork#isActive()} returns false.
+   */
+  EntityManager get() throws IllegalStateException;
 
 }

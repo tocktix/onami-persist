@@ -53,250 +53,215 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link UserTransactionFacade}.
  */
-public class UserTransactionFacadeTest
-{
+public class UserTransactionFacadeTest {
 
-    private UserTransactionFacade sut;
+  private UserTransactionFacade sut;
 
-    private UserTransaction txn;
+  private UserTransaction txn;
 
-    @Before
-    public void setup()
-        throws Exception
-    {
-        txn = mock( UserTransaction.class );
-        sut = new UserTransactionFacade( txn );
-    }
+  @Before
+  public void setup() throws Exception {
+    txn = mock(UserTransaction.class);
+    sut = new UserTransactionFacade(txn);
+  }
 
-    @Test
-    public void beginOnTxn()
-        throws Exception
-    {
-        sut.begin();
-        verify( txn ).begin();
-    }
+  @Test
+  public void beginOnTxn() throws Exception {
+    sut.begin();
+    verify(txn).begin();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void beginWithNotSupportedException()
-        throws Exception
-    {
-        doThrow( new NotSupportedException() ).when( txn ).begin();
-        sut.begin();
-    }
+  @Test(expected = RuntimeException.class)
+  public void beginWithNotSupportedException() throws Exception {
+    doThrow(new NotSupportedException()).when(txn)
+        .begin();
+    sut.begin();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void beginWithSystemException()
-        throws Exception
-    {
-        doThrow( new SystemException() ).when( txn ).begin();
-        sut.begin();
-    }
+  @Test(expected = RuntimeException.class)
+  public void beginWithSystemException() throws Exception {
+    doThrow(new SystemException()).when(txn)
+        .begin();
+    sut.begin();
+  }
 
-    @Test
-    public void commitOnTxn()
-        throws Exception
-    {
-        sut.commit();
-        verify( txn ).commit();
-    }
+  @Test
+  public void commitOnTxn() throws Exception {
+    sut.commit();
+    verify(txn).commit();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void commitWithSecurityException()
-        throws Exception
-    {
-        doThrow( new SecurityException() ).when( txn ).commit();
-        sut.commit();
-    }
+  @Test(expected = RuntimeException.class)
+  public void commitWithSecurityException() throws Exception {
+    doThrow(new SecurityException()).when(txn)
+        .commit();
+    sut.commit();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void commitWithIllegalStateException()
-        throws Exception
-    {
-        doThrow( new IllegalStateException() ).when( txn ).commit();
-        sut.commit();
-    }
+  @Test(expected = RuntimeException.class)
+  public void commitWithIllegalStateException() throws Exception {
+    doThrow(new IllegalStateException()).when(txn)
+        .commit();
+    sut.commit();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void commitWithRollbackException()
-        throws Exception
-    {
-        doThrow( new RollbackException() ).when( txn ).commit();
-        sut.commit();
-    }
+  @Test(expected = RuntimeException.class)
+  public void commitWithRollbackException() throws Exception {
+    doThrow(new RollbackException()).when(txn)
+        .commit();
+    sut.commit();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void commitWithHeuristicMixedException()
-        throws Exception
-    {
-        doThrow( new HeuristicMixedException() ).when( txn ).commit();
-        sut.commit();
-    }
+  @Test(expected = RuntimeException.class)
+  public void commitWithHeuristicMixedException() throws Exception {
+    doThrow(new HeuristicMixedException()).when(txn)
+        .commit();
+    sut.commit();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void commitWithHeuristicRollbackException()
-        throws Exception
-    {
-        doThrow( new HeuristicRollbackException() ).when( txn ).commit();
-        sut.commit();
-    }
+  @Test(expected = RuntimeException.class)
+  public void commitWithHeuristicRollbackException() throws Exception {
+    doThrow(new HeuristicRollbackException()).when(txn)
+        .commit();
+    sut.commit();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void commitWithSystemException()
-        throws Exception
-    {
-        doThrow( new SystemException() ).when( txn ).commit();
-        sut.commit();
-    }
+  @Test(expected = RuntimeException.class)
+  public void commitWithSystemException() throws Exception {
+    doThrow(new SystemException()).when(txn)
+        .commit();
+    sut.commit();
+  }
 
-    @Test
-    public void rollbackOnTxn()
-        throws Exception
-    {
-        sut.rollback();
-        verify( txn ).rollback();
-    }
+  @Test
+  public void rollbackOnTxn() throws Exception {
+    sut.rollback();
+    verify(txn).rollback();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void rollbackWithIllegalStateException()
-        throws Exception
-    {
-        doThrow( new IllegalStateException() ).when( txn ).rollback();
-        sut.rollback();
-    }
+  @Test(expected = RuntimeException.class)
+  public void rollbackWithIllegalStateException() throws Exception {
+    doThrow(new IllegalStateException()).when(txn)
+        .rollback();
+    sut.rollback();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void rollbackWithSecurityException()
-        throws Exception
-    {
-        doThrow( new SecurityException() ).when( txn ).rollback();
-        sut.rollback();
-    }
+  @Test(expected = RuntimeException.class)
+  public void rollbackWithSecurityException() throws Exception {
+    doThrow(new SecurityException()).when(txn)
+        .rollback();
+    sut.rollback();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void rollbackWithSystemException()
-        throws Exception
-    {
-        doThrow( new SystemException() ).when( txn ).rollback();
-        sut.rollback();
-    }
+  @Test(expected = RuntimeException.class)
+  public void rollbackWithSystemException() throws Exception {
+    doThrow(new SystemException()).when(txn)
+        .rollback();
+    sut.rollback();
+  }
 
-    @Test
-    public void setRollbackOnlyOnTxn()
-        throws Exception
-    {
-        sut.setRollbackOnly();
-        verify( txn ).setRollbackOnly();
-    }
+  @Test
+  public void setRollbackOnlyOnTxn() throws Exception {
+    sut.setRollbackOnly();
+    verify(txn).setRollbackOnly();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void setRollbackOnlyWithIllegalStateException()
-        throws Exception
-    {
-        doThrow( new IllegalStateException() ).when( txn ).setRollbackOnly();
-        sut.setRollbackOnly();
-    }
+  @Test(expected = RuntimeException.class)
+  public void setRollbackOnlyWithIllegalStateException() throws Exception {
+    doThrow(new IllegalStateException()).when(txn)
+        .setRollbackOnly();
+    sut.setRollbackOnly();
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void setRollbackOnlyWithSystemException()
-        throws Exception
-    {
-        doThrow( new SystemException() ).when( txn ).setRollbackOnly();
-        sut.setRollbackOnly();
-    }
+  @Test(expected = RuntimeException.class)
+  public void setRollbackOnlyWithSystemException() throws Exception {
+    doThrow(new SystemException()).when(txn)
+        .setRollbackOnly();
+    sut.setRollbackOnly();
+  }
 
-    @Test
-    public void getRollbackOnlyUsesStatusOfTransaction()
-        throws Exception
-    {
-        assertThatRollbackOnlyOf( STATUS_ACTIVE, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_MARKED_ROLLBACK, is( true ) );
-        assertThatRollbackOnlyOf( STATUS_PREPARED, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_COMMITTED, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_ROLLEDBACK, is( true ) );
-        assertThatRollbackOnlyOf( STATUS_UNKNOWN, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_NO_TRANSACTION, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_PREPARING, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_COMMITTING, is( false ) );
-        assertThatRollbackOnlyOf( STATUS_ROLLING_BACK, is( true ) );
-    }
+  @Test
+  public void getRollbackOnlyUsesStatusOfTransaction() throws Exception {
+    assertThatRollbackOnlyOf(STATUS_ACTIVE, is(false));
+    assertThatRollbackOnlyOf(STATUS_MARKED_ROLLBACK, is(true));
+    assertThatRollbackOnlyOf(STATUS_PREPARED, is(false));
+    assertThatRollbackOnlyOf(STATUS_COMMITTED, is(false));
+    assertThatRollbackOnlyOf(STATUS_ROLLEDBACK, is(true));
+    assertThatRollbackOnlyOf(STATUS_UNKNOWN, is(false));
+    assertThatRollbackOnlyOf(STATUS_NO_TRANSACTION, is(false));
+    assertThatRollbackOnlyOf(STATUS_PREPARING, is(false));
+    assertThatRollbackOnlyOf(STATUS_COMMITTING, is(false));
+    assertThatRollbackOnlyOf(STATUS_ROLLING_BACK, is(true));
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void getRollbackOnlyWithSystemException()
-        throws Exception
-    {
-        doThrow( new SystemException() ).when( txn ).getStatus();
-        sut.getRollbackOnly();
-    }
+  @Test(expected = RuntimeException.class)
+  public void getRollbackOnlyWithSystemException() throws Exception {
+    doThrow(new SystemException()).when(txn)
+        .getStatus();
+    sut.getRollbackOnly();
+  }
 
-    @Test
-    public void getRollbackOnlyRetriesWhenStatusUnknown()
-        throws Exception
-    {
-        final long start = currentTimeMillis();
-        doReturn( STATUS_UNKNOWN ).when( txn ).getStatus();
-        sut.getRollbackOnly();
-        final long duration = currentTimeMillis() - start;
+  @Test
+  public void getRollbackOnlyRetriesWhenStatusUnknown() throws Exception {
+    final long start = currentTimeMillis();
+    doReturn(STATUS_UNKNOWN).when(txn)
+        .getStatus();
+    sut.getRollbackOnly();
+    final long duration = currentTimeMillis() - start;
 
-        verify( txn, times( 9 ) ).getStatus();
-        assertThat( duration, is( greaterThan( 1000L ) ) );
-    }
+    verify(txn, times(9)).getStatus();
+    assertThat(duration, is(greaterThan(1000L)));
+  }
 
-    @Test
-    public void isActiveUsesStatusOfTransaction()
-        throws Exception
-    {
-        assertThatIsActiveOf( STATUS_ACTIVE, is( true ) );
-        assertThatIsActiveOf( STATUS_MARKED_ROLLBACK, is( true ) );
-        assertThatIsActiveOf( STATUS_PREPARED, is( true ) );
-        assertThatIsActiveOf( STATUS_COMMITTED, is( true ) );
-        assertThatIsActiveOf( STATUS_ROLLEDBACK, is( true ) );
-        assertThatIsActiveOf( STATUS_UNKNOWN, is( true ) );
-        assertThatIsActiveOf( STATUS_NO_TRANSACTION, is( false ) );
-        assertThatIsActiveOf( STATUS_PREPARING, is( true ) );
-        assertThatIsActiveOf( STATUS_COMMITTING, is( true ) );
-        assertThatIsActiveOf( STATUS_ROLLING_BACK, is( true ) );
-    }
+  @Test
+  public void isActiveUsesStatusOfTransaction() throws Exception {
+    assertThatIsActiveOf(STATUS_ACTIVE, is(true));
+    assertThatIsActiveOf(STATUS_MARKED_ROLLBACK, is(true));
+    assertThatIsActiveOf(STATUS_PREPARED, is(true));
+    assertThatIsActiveOf(STATUS_COMMITTED, is(true));
+    assertThatIsActiveOf(STATUS_ROLLEDBACK, is(true));
+    assertThatIsActiveOf(STATUS_UNKNOWN, is(true));
+    assertThatIsActiveOf(STATUS_NO_TRANSACTION, is(false));
+    assertThatIsActiveOf(STATUS_PREPARING, is(true));
+    assertThatIsActiveOf(STATUS_COMMITTING, is(true));
+    assertThatIsActiveOf(STATUS_ROLLING_BACK, is(true));
+  }
 
-    @Test( expected = RuntimeException.class )
-    public void isActiveWithSystemException()
-        throws Exception
-    {
-        doThrow( new SystemException() ).when( txn ).getStatus();
-        sut.isActive();
-    }
+  @Test(expected = RuntimeException.class)
+  public void isActiveWithSystemException() throws Exception {
+    doThrow(new SystemException()).when(txn)
+        .getStatus();
+    sut.isActive();
+  }
 
-    @Test
-    public void isActiveOnlyRetriesWhenStatusUnknown()
-        throws Exception
-    {
-        final long start = currentTimeMillis();
-        doReturn( STATUS_UNKNOWN ).when( txn ).getStatus();
-        sut.isActive();
-        final long duration = currentTimeMillis() - start;
+  @Test
+  public void isActiveOnlyRetriesWhenStatusUnknown() throws Exception {
+    final long start = currentTimeMillis();
+    doReturn(STATUS_UNKNOWN).when(txn)
+        .getStatus();
+    sut.isActive();
+    final long duration = currentTimeMillis() - start;
 
-        verify( txn, times( 9 ) ).getStatus();
-        assertThat( duration, is( greaterThan( 1000L ) ) );
-    }
+    verify(txn, times(9)).getStatus();
+    assertThat(duration, is(greaterThan(1000L)));
+  }
 
-    private void assertThatRollbackOnlyOf( int status, Matcher<Boolean> expected )
-        throws Exception
-    {
-        doReturn( status ).when( txn ).getStatus();
-        final boolean result = sut.getRollbackOnly();
-        assertThat( result, is( expected ) );
-    }
+  private void assertThatRollbackOnlyOf(int status, Matcher<Boolean> expected) throws Exception {
+    doReturn(status).when(txn)
+        .getStatus();
+    final boolean result = sut.getRollbackOnly();
+    assertThat(result, is(expected));
+  }
 
-    private void assertThatIsActiveOf( int status, Matcher<Boolean> expected )
-        throws Exception
-    {
-        doReturn( status ).when( txn ).getStatus();
-        final boolean result = sut.isActive();
-        assertThat( result, is( expected ) );
-    }
+  private void assertThatIsActiveOf(int status, Matcher<Boolean> expected) throws Exception {
+    doReturn(status).when(txn)
+        .getStatus();
+    final boolean result = sut.isActive();
+    assertThat(result, is(expected));
+  }
 
-    private Matcher<Long> greaterThan( long expected )
-    {
-        return new GreaterThan<Long>( expected );
-    }
+  private Matcher<Long> greaterThan(long expected) {
+    return new GreaterThan<Long>(expected);
+  }
 
 }

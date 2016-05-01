@@ -28,44 +28,40 @@ import java.lang.reflect.Method;
  * Reader which obtains the concrete {@link Transactional @Transactional} annotation of a method.
  */
 @Singleton
-class TransactionalAnnotationReader
-{
+class TransactionalAnnotationReader {
 
-    /**
-     * Constant holding a transactional instance with all default values.
-     */
-    private static final Transactional DEFAULT_TRANSACTIONAL =
-        DefaultTransactional.class.getAnnotation( Transactional.class );
+  /**
+   * Constant holding a transactional instance with all default values.
+   */
+  private static final Transactional DEFAULT_TRANSACTIONAL =
+      DefaultTransactional.class.getAnnotation(Transactional.class);
 
-    /**
-     * Reads the {@link Transactional @Transactional} of a given method invocation.
-     *
-     * @param methodInvocation the method invocation for which to obtain the {@link Transactional @Transactional}.
-     * @return the {@link Transactional @Transactional} of the given method invocation. Never {@code null}.
-     */
-    Transactional readAnnotationFrom( MethodInvocation methodInvocation )
-    {
-        Transactional result;
-        final Method method = methodInvocation.getMethod();
-        result = method.getAnnotation( Transactional.class );
-        if ( null == result )
-        {
-            final Class<?> targetClass = methodInvocation.getThis().getClass();
-            result = targetClass.getAnnotation( Transactional.class );
-        }
-        if ( null == result )
-        {
-            result = DEFAULT_TRANSACTIONAL;
-        }
-        return result;
+  /**
+   * Reads the {@link Transactional @Transactional} of a given method invocation.
+   *
+   * @param methodInvocation the method invocation for which to obtain the {@link Transactional @Transactional}.
+   * @return the {@link Transactional @Transactional} of the given method invocation. Never {@code null}.
+   */
+  Transactional readAnnotationFrom(MethodInvocation methodInvocation) {
+    Transactional result;
+    final Method method = methodInvocation.getMethod();
+    result = method.getAnnotation(Transactional.class);
+    if (null == result) {
+      final Class<?> targetClass = methodInvocation.getThis()
+          .getClass();
+      result = targetClass.getAnnotation(Transactional.class);
     }
-
-    /**
-     * Helper class for obtaining the default of {@link Transactional @Transactional}.
-     */
-    @Transactional
-    private static class DefaultTransactional
-    {
+    if (null == result) {
+      result = DEFAULT_TRANSACTIONAL;
     }
+    return result;
+  }
+
+  /**
+   * Helper class for obtaining the default of {@link Transactional @Transactional}.
+   */
+  @Transactional
+  private static class DefaultTransactional {
+  }
 
 }

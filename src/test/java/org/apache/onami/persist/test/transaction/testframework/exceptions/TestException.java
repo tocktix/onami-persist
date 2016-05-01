@@ -19,38 +19,34 @@ package org.apache.onami.persist.test.transaction.testframework.exceptions;
  * under the License.
  */
 
+
 /**
  * Exception which can be thrown by a {@link org.apache.onami.persist.test.transaction.testframework.TransactionalTask}.
  */
-public class TestException
-    extends Exception
-{
+public class TestException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private final String message;
+  private final String message;
 
-    /**
-     * Constructor.
-     */
-    public TestException()
-    {
-        message = TestException.class.getSimpleName();
-    }
+  /**
+   * Constructor.
+   */
+  public TestException() {
+    message = TestException.class.getSimpleName();
+  }
 
-    /**
-     * Constructor.
-     *
-     * @param message the message of the exception.
-     */
-    public TestException( String message )
-    {
-        this.message = message;
-    }
+  /**
+   * Constructor.
+   *
+   * @param message the message of the exception.
+   */
+  public TestException(String message) {
+    this.message = message;
+  }
 
-    @Override
-    public String getMessage()
-    {
-        return message;
-    }
+  @Override
+  public String getMessage() {
+    return message;
+  }
 }
