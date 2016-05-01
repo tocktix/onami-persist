@@ -171,7 +171,7 @@ public class AllPersistenceUnitsTest {
   }
 
   @Test
-  public void shouldBeginOnAllUnitsOfWork() throws Exception {
+  public void shouldBeginOnAllInactiveUnitsOfWork() throws Exception {
     // when
     sut.beginAllInactiveUnitsOfWork();
 
@@ -179,6 +179,17 @@ public class AllPersistenceUnitsTest {
     verify(uow1).begin();
     verify(uow2).begin();
   }
+
+    @Test
+  public void shouldBeginOnAllUnitsOfWork() throws Exception {
+    // when
+    sut.beginAllUnitsOfWork();
+
+    // then
+    verify(uow1).begin();
+    verify(uow2).begin();
+  }
+
 
   @Test
   public void shouldNotBeginOnActiveUnitsOfWork() throws Exception {

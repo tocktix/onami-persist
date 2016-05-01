@@ -122,9 +122,7 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
     for (UnitOfWork unitOfWork : unitsOfWork) {
       try {
-        if (!unitOfWork.isActive()) {
-          unitOfWork.begin();
-        }
+        unitOfWork.begin();
       } catch (Exception e) {
         exceptionBuilder.add(e);
       }
