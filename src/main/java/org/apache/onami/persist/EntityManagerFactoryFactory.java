@@ -53,11 +53,8 @@ class EntityManagerFactoryFactory {
    */
   @Inject
   EntityManagerFactoryFactory(
-      @ForApplicationManaged
-      String puName,
-      @Nullable
-      @ForApplicationManaged
-      Properties properties) {
+      @ForApplicationManaged String puName,
+      @Nullable @ForApplicationManaged Properties properties) {
     this.puName = checkNotNull(puName, "puName is mandatory!");
     this.properties = properties;
   }

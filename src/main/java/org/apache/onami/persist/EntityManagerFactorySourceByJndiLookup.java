@@ -50,8 +50,7 @@ class EntityManagerFactorySourceByJndiLookup implements EntityManagerFactorySour
    */
   @Inject
   EntityManagerFactorySourceByJndiLookup(
-      @ForContainerManaged
-      String jndiName, JndiLookupHelper jndiLookupHelper) {
+      @ForContainerManaged String jndiName, JndiLookupHelper jndiLookupHelper) {
     this.jndiName = checkNotNull(jndiName, "jndiName is mandatory!");
     this.jndiLookupHelper = checkNotNull(jndiLookupHelper, "jndiLookupHelper is mandatory!");
   }

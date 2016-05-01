@@ -40,8 +40,7 @@ class EntityManagerFactorySourceViaProvider implements EntityManagerFactorySourc
    */
   @Inject
   public EntityManagerFactorySourceViaProvider(
-      @ForContainerManaged
-      Provider<EntityManagerFactory> emfProvider) {
+      @ForContainerManaged Provider<EntityManagerFactory> emfProvider) {
     this.emfProvider = emfProvider;
   }
 

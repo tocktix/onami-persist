@@ -43,8 +43,7 @@ class UserTransactionProviderByJndiLookup implements Provider<UserTransaction> {
    */
   @Inject
   UserTransactionProviderByJndiLookup(
-      @UserTransactionJndiName
-      String jndiName, JndiLookupHelper jndiLookupHelper) {
+      @UserTransactionJndiName String jndiName, JndiLookupHelper jndiLookupHelper) {
     this.jndiName = checkNotNull(jndiName, "jndiName is mandatory!");
     this.jndiLookupHelper = checkNotNull(jndiLookupHelper, "jndiLookupHelper is mandatory!");
   }
