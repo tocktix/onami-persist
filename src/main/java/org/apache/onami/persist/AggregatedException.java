@@ -30,9 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Exception holding an aggregation of multiple exceptions which were collected.
  */
 class AggregatedException extends RuntimeException {
-
   private static final long serialVersionUID = 1L;
-
 
   /**
    * Builder for AggregatedException
@@ -128,7 +126,6 @@ class AggregatedException extends RuntimeException {
   @Override
   public void printStackTrace(PrintStream s) {
     synchronized (s) {
-
       s.println(this);
       StackTraceElement[] trace = getStackTrace();
       for (final StackTraceElement aTrace : trace) {
@@ -148,7 +145,6 @@ class AggregatedException extends RuntimeException {
   @Override
   public void printStackTrace(PrintWriter s) {
     synchronized (s) {
-
       s.println(this);
       StackTraceElement[] trace = getStackTrace();
       for (final StackTraceElement aTrace : trace) {
@@ -169,5 +165,4 @@ class AggregatedException extends RuntimeException {
   public String toString() {
     return super.toString() + " (caused by " + numCauses + " causes)";
   }
-
 }

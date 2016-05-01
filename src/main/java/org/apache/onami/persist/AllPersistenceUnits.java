@@ -118,6 +118,24 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
    * {@inheritDoc}
    */
   // @Override
+  public void beginAllUnitsOfWork() {
+    AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
+    for (UnitOfWork unitOfWork : unitsOfWork) {
+      try {
+        if (!unitOfWork.isActive()) {
+          unitOfWork.begin();
+        }
+      } catch (Exception e) {
+        exceptionBuilder.add(e);
+      }
+    }
+    exceptionBuilder.throwRuntimeExceptionIfHasCauses("multiple exception occurred while starting the unit of work");
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
   public void beginAllInactiveUnitsOfWork() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
     for (UnitOfWork unitOfWork : unitsOfWork) {

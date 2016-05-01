@@ -97,5 +97,4 @@ class ApplicationManagedEntityManagerFactoryProvider implements EntityManagerFac
       }
     }
   }
-
 }

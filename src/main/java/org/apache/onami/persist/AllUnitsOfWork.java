@@ -30,6 +30,11 @@ public interface AllUnitsOfWork {
    */
   void beginAllInactiveUnitsOfWork();
 
+    /**
+   * Calls {@link UnitOfWork#begin()} on all units of works, none of the units should be running before this call.
+   */
+  void beginAllUnitsOfWork();
+
   /**
    * Calls {@link UnitOfWork#end()} on all units of work.
    */
