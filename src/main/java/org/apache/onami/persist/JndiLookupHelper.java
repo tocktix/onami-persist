@@ -19,6 +19,8 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.base.Preconditions;
+
 import javax.inject.Singleton;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -46,8 +48,8 @@ class JndiLookupHelper
             final InitialContext ctx = new InitialContext();
             final T result = (T) ctx.lookup( jndiName );
 
-            Preconditions.checkNotNull( result, "lookup for " + type.getSimpleName() + " with JNDI name '" + jndiName
-                + "' returned null" );
+            Preconditions.checkNotNull(result,
+                "lookup for " + type.getSimpleName() + " with JNDI name '" + jndiName + "' returned null");
 
             return result;
         }

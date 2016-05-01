@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManagerFactory;
 
-import static org.apache.onami.persist.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implementation of {@link PersistenceService} and {@link EntityManagerFactoryProvider} for

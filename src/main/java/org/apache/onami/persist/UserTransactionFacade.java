@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.apache.onami.persist.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Facade to the {@link javax.transaction.UserTransaction} which wraps all checked exception into runtime exceptions.

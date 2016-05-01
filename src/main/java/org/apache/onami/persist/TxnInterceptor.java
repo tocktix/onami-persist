@@ -19,6 +19,7 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.annotations.VisibleForTesting;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 

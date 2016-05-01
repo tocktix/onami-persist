@@ -27,7 +27,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 import java.util.Properties;
 
-import static org.apache.onami.persist.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Module for configuring a single persistence unit.

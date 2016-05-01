@@ -29,9 +29,9 @@ import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
-import static org.apache.onami.persist.Preconditions.checkNotNull;
 
 /**
  * Main module of the onami persist guice extension.

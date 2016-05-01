@@ -25,8 +25,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
-import static org.apache.onami.persist.Preconditions.checkNotNull;
 
 /**
  * Helper class for working with {@link Transactional @Transactional} annotations.

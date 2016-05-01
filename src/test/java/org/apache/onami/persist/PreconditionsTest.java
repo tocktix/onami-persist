@@ -19,6 +19,7 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.base.Preconditions;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -55,7 +56,7 @@ public class PreconditionsTest
     public void notThrowing()
     {
         final Object input = new Object();
-        final Object result = Preconditions.checkNotNull( input );
+        final Object result = Preconditions.checkNotNull(input);
         assertThat( result, sameInstance( input ) );
     }
 
@@ -82,11 +83,4 @@ public class PreconditionsTest
         final Object result = Preconditions.checkNotNull( input, MESSAGE );
         assertThat( result, sameInstance( input ) );
     }
-
-    @Test
-    public void canBeCreated()
-    {
-        new Preconditions();
-    }
-
 }

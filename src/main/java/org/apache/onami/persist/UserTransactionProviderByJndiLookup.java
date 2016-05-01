@@ -24,7 +24,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
 
-import static org.apache.onami.persist.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Provider fro {@link UserTransaction} which retrieves the value from the JNDI context.
