@@ -57,7 +57,7 @@ import java.lang.annotation.Target;
 public @interface Transactional {
   /**
    * A List of annotations for persistence units on which to start a transaction.
-   * Default is on all persistence units.
+   * The caller can specify {} for un-annotated units.
    */
   Class<? extends Annotation>[] onUnits();
 
