@@ -36,7 +36,7 @@ public class TaskRollingBackOnTestExceptionThrowingTestException extends Transac
    * {@inheritDoc}
    */
   @Override
-  @Transactional(rollbackOn = TestException.class)
+  @Transactional(rollbackOn = TestException.class, onUnits = {})
   public void doTransactional() throws TestException, RuntimeTestException {
     storeEntity(new TestEntity());
     doOtherTasks();

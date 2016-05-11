@@ -54,23 +54,24 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface Transactional {
+public @interface
+    Transactional {
 
   /**
    * A List of annotations for persistence units on which to start a transaction.
    * Default is on all persistence units.
    */
-  Class<? extends Annotation>[] onUnits() default {};
+  Class<? extends Annotation>[] onUnits();
 
   /**
-   * A list of exceptions to rollback on. Default is {@link RuntimeException}.
+   * A list of exceptions to rollback on. Default is {@link Throwable}.
    */
-  Class<? extends Exception>[] rollbackOn() default RuntimeException.class;
+  Class<? extends Throwable>[] rollbackOn() default Throwable.class;
 
   /**
    * A list of exceptions to <b>not<b> rollback on. Use this to exclude one ore more subclasses of
    * the exceptions defined in rollbackOn(). Default is none.
    */
-  Class<? extends Exception>[] ignore() default {};
+  Class<? extends Throwable>[] ignore() default {};
 
 }
