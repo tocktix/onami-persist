@@ -54,9 +54,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface
-    Transactional {
-
+public @interface Transactional {
   /**
    * A List of annotations for persistence units on which to start a transaction.
    * Default is on all persistence units.
@@ -73,5 +71,4 @@ public @interface
    * the exceptions defined in rollbackOn(). Default is none.
    */
   Class<? extends Throwable>[] ignore() default {};
-
 }
