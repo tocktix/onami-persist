@@ -53,8 +53,8 @@ public final class TransactionalAnnotationMatcher extends BaseMatcher<Transactio
     if (item instanceof Transactional) {
       Transactional transactional = (Transactional) item;
       final Set<Class<? extends Annotation>> actualUnits = asSet(transactional.onUnits());
-      final Set<Class<? extends Exception>> actualRollback = asSet(transactional.rollbackOn());
-      final Set<Class<? extends Exception>> actualIgnore = asSet(transactional.ignore());
+      final Set<Class<? extends Throwable>> actualRollback = asSet(transactional.rollbackOn());
+      final Set<Class<? extends Throwable>> actualIgnore = asSet(transactional.ignore());
 
       return actualUnits.equals(expectedUnits) && actualRollback.equals(expectedRollback) && actualIgnore.equals(
           expectedIgnore);

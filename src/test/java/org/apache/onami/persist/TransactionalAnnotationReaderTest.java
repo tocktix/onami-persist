@@ -65,7 +65,7 @@ public class TransactionalAnnotationReaderTest {
     final Transactional result = sut.readAnnotationFrom(invocation);
 
     Assert.assertThat(result,
-        TransactionalAnnotationMatcher.transactionalAnnotation(new Class[] {}, new Class[] {RuntimeException.class},
+        TransactionalAnnotationMatcher.transactionalAnnotation(new Class[] {}, new Class[] {Throwable.class},
             new Class[] {}));
   }
 

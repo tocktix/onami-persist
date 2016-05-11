@@ -132,8 +132,8 @@ class TransactionalAnnotationHelper {
    * @param exc     the class to search for
    * @return {@code true} when the array contains a super class of exc.
    */
-  private boolean containsSuper(Class<? extends Exception>[] classes, Throwable exc) {
-    for (Class<? extends Exception> c : classes) {
+  private boolean containsSuper(Class<? extends Throwable>[] classes, Throwable exc) {
+    for (Class<? extends Throwable> c : classes) {
       if (c.isInstance(exc)) {
         return true;
       }

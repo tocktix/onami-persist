@@ -60,7 +60,7 @@ class TransactionalAnnotationReader {
   /**
    * Helper class for obtaining the default of {@link Transactional @Transactional}.
    */
-  @Transactional
+  @Transactional(onUnits = {})
   private static class DefaultTransactional {
   }
 

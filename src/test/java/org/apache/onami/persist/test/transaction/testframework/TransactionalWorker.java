@@ -109,7 +109,7 @@ public class TransactionalWorker {
   /**
    * Check all stored entities if they actually have been persisted in the DB.
    */
-  @Transactional
+  @Transactional(onUnits = {})
   public void assertAllEntitiesHaveBeenPersisted() {
     checkState(!storedEntities.isEmpty(), "no entities to check");
     for (TestEntity storedEntity : storedEntities) {
@@ -122,7 +122,7 @@ public class TransactionalWorker {
   /**
    * Check all stored entities if they actually have NOT been persisted in the DB.
    */
-  @Transactional
+  @Transactional(onUnits = {})
   public void assertNoEntityHasBeenPersisted() {
     checkState(!storedEntities.isEmpty(), "no entities to check");
     for (TestEntity storedEntity : storedEntities) {
