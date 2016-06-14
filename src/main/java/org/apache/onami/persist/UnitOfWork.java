@@ -78,4 +78,9 @@ public interface UnitOfWork {
    */
   void end();
 
+  /*
+   * @return the {@link EntityManager}.
+   * @throws IllegalStateException if {@link UnitOfWork#isActive()} returns false.
+   */
+  EntityManager getEntityManager() throws IllegalStateException;
 }

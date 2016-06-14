@@ -20,6 +20,9 @@ package org.apache.onami.persist;
  */
 
 
+import javax.persistence.EntityManager;
+import java.util.List;
+
 /**
  * Interface for aggregation of multiple {@link UnitOfWork UnitsOfWork}.
  */
@@ -34,6 +37,12 @@ public interface AllUnitsOfWork {
    * Calls {@link UnitOfWork#begin()} on all units of works, none of the units should be running before this call.
    */
   void beginAllUnitsOfWork();
+
+    /*
+   * @return the {@link EntityManager}.
+   * @throws IllegalStateException if {@link UnitOfWork#isActive()} returns false.
+   */
+  List<EntityManager> getAllEntityManagers() throws IllegalStateException;
 
   /**
    * Calls {@link UnitOfWork#end()} on all units of work.

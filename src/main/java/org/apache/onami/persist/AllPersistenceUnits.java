@@ -24,10 +24,12 @@ import com.google.inject.Key;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -164,4 +166,11 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
     exceptionBuilder.throwRuntimeExceptionIfHasCauses("multiple exception occurred while ending the unit of work");
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public List<EntityManager> getAllEntityManagers() {
+    return unitsOfWork.stream().map(UnitOfWork::getEntityManager).collect(Collectors.toList());
+  }
 }

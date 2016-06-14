@@ -134,4 +134,11 @@ class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  // @Override
+  public EntityManager getEntityManager() throws IllegalStateException {
+    return get();
+  }
 }
