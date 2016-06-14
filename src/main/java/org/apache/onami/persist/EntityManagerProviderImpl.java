@@ -19,6 +19,8 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.base.Preconditions;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,7 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Implementation of {@link EntityManagerProvider} and {@link UnitOfWork}.
  */
 @Singleton
-class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork {
+class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork, TransactionStateObserver, TransactionHookManager {
 
   /**
    * Provider for {@link javax.persistence.EntityManagerFactory}.
@@ -48,6 +50,11 @@ class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork {
    * Thread local store of {@link EntityManager}s.
    */
   private final ThreadLocal<EntityManager> entityManagers = new ThreadLocal<>();
+
+  /**
+   * Thread local store of {@link TransactionFacade} instances.
+   */
+  private final ThreadLocal<TransactionFacade> transactionFacades = new ThreadLocal<>();
 
   /**
    * Constructor.
@@ -100,6 +107,36 @@ class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork {
     } else {
       return emf.createEntityManager(properties);
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public TransactionHolder withTransaction(final TransactionFacade transactionFacade) {
+    final TransactionFacade original = transactionFacades.get();
+    transactionFacades.set(transactionFacade);
+    return new TransactionHolder() {
+      @Override
+      public TransactionFacade getTransaction() {
+        return transactionFacade;
+      }
+
+      @Override
+      public void close() throws Exception {
+        transactionFacades.set(original);
+      }
+    };
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void addPostCommitCallback(Runnable callback) {
+    TransactionFacade transactionFacade = transactionFacades.get();
+    Preconditions.checkNotNull(transactionFacade, "Cannot add a callback outside the context of a transaction");
+    transactionFacade.addPostCommitCallback(callback);
   }
 
   /**

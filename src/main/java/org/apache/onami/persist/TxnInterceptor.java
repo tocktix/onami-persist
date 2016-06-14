@@ -22,6 +22,7 @@ package org.apache.onami.persist;
 import com.google.common.annotations.VisibleForTesting;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.onami.persist.TransactionStateObserver.TransactionHolder;
 
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ class TxnInterceptor implements MethodInterceptor {
    */
   private UnitOfWork unitOfWork;
 
+  private TransactionStateObserver transactionStateObserver;
   /**
    * Factory for {@link TransactionFacade}.
    */
@@ -47,9 +49,10 @@ class TxnInterceptor implements MethodInterceptor {
 
   @Inject
   @VisibleForTesting
-  void init(UnitOfWork unitOfWork, TransactionFacadeFactory tfProvider,
+  void init(UnitOfWork unitOfWork, TransactionStateObserver transactionStateObserver, TransactionFacadeFactory tfProvider,
       TransactionalAnnotationHelper txnAnnotationHelper) {
     this.unitOfWork = unitOfWork;
+    this.transactionStateObserver = transactionStateObserver;
     this.tfProvider = tfProvider;
     this.txnAnnotationHelper = txnAnnotationHelper;
   }
@@ -134,11 +137,12 @@ class TxnInterceptor implements MethodInterceptor {
    */
   private Object invokeInTransaction(MethodInvocation methodInvocation) throws Throwable {
     final TransactionFacade transactionFacade = tfProvider.createTransactionFacade();
-    transactionFacade.begin();
-    final Object result = invokeAndHandleException(methodInvocation, transactionFacade);
-    transactionFacade.commit();
-
-    return result;
+    try (TransactionHolder ignored = transactionStateObserver.withTransaction(transactionFacade)) {
+      transactionFacade.begin();
+      final Object result = invokeAndHandleException(methodInvocation, transactionFacade);
+      transactionFacade.commit();
+      return result;
+    }
   }
 
   /**

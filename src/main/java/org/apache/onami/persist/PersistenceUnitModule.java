@@ -77,6 +77,8 @@ class PersistenceUnitModule extends PrivateModule {
 
     bind(EntityManagerProvider.class).to(EntityManagerProviderImpl.class);
     bind(UnitOfWork.class).to(EntityManagerProviderImpl.class);
+    bind(TransactionStateObserver.class).to(EntityManagerProviderImpl.class);
+    bind(TransactionHookManager.class).to(EntityManagerProviderImpl.class);
 
     exposePersistenceServiceAndEntityManagerProviderAndUnitOfWork();
 
@@ -94,6 +96,7 @@ class PersistenceUnitModule extends PrivateModule {
    * <li>{@link PersistenceService}</li>
    * <li>{@link EntityManagerProvider}</li>
    * <li>{@link UnitOfWork}</li>
+   * <li>{@link TransactionHookManager}</li>
    * </ul>
    */
   private void exposePersistenceServiceAndEntityManagerProviderAndUnitOfWork() {
@@ -101,10 +104,12 @@ class PersistenceUnitModule extends PrivateModule {
       bindAndExposedAnnotated(PersistenceService.class);
       bindAndExposedAnnotated(EntityManagerProvider.class);
       bindAndExposedAnnotated(UnitOfWork.class);
+      bindAndExposedAnnotated(TransactionHookManager.class);
     } else {
       expose(PersistenceService.class);
       expose(EntityManagerProvider.class);
       expose(UnitOfWork.class);
+      expose(TransactionHookManager.class);
     }
   }
 

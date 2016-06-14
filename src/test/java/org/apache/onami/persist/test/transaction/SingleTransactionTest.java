@@ -31,14 +31,24 @@ import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRolling
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnNoneThrowingRuntimeTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnNoneThrowingTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnRuntimeTestExceptionThrowingNone;
-import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException;
-import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnRuntimeTestExceptionThrowingTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks
+    .TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks
+    .TaskRollingBackOnRuntimeTestExceptionThrowingTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingNone;
-import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingRuntimeTestException;
-import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks
+    .TaskRollingBackOnTestExceptionThrowingRuntimeTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks
+    .TaskRollingBackOnTestExceptionThrowingTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskThatUpdatesSpyValueWithPostCommitHook;
+import org.apache.onami.persist.test.transaction.testframework.tasks
+    .TaskThatUpdatesSpyValueWithPostCommitHookAndThenRollsBack;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests running a single non nested transaction.
@@ -50,10 +60,15 @@ public class SingleTransactionTest {
 
   private TransactionalWorker worker;
 
+
+
+  private SpyBox spyValue = new SpyBox();
+
+
   @Before
   public void setUp() {
     final PersistenceModule pm = createPersistenceModuleForTest();
-    injector = Guice.createInjector(pm);
+    injector = Guice.createInjector(pm, new SpyModule(spyValue));
 
     //startup persistence
     injector.getInstance(PersistenceService.class)
@@ -220,6 +235,22 @@ public class SingleTransactionTest {
 
     // then
     worker.assertNoEntityHasBeenPersisted();
+  }
+
+  @Test
+  public void testTaskThatSchedulesCallbacks() {
+    worker.scheduleTask(TaskThatUpdatesSpyValueWithPostCommitHook.class);
+    worker.doTasks();
+    worker.assertAllEntitiesHaveBeenPersisted();
+    assertTrue(spyValue.getValue());
+  }
+
+  @Test
+  public void testTaskThatSchedulesCallbacksAndThenRollsBack() {
+    worker.scheduleTask(TaskThatUpdatesSpyValueWithPostCommitHookAndThenRollsBack.class);
+    worker.doTasks();
+    worker.assertNoEntityHasBeenPersisted();
+    assertFalse(spyValue.getValue());
   }
 
 }

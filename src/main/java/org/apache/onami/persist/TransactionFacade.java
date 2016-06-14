@@ -48,4 +48,13 @@ interface TransactionFacade {
    */
   void rollback();
 
+  /**
+   * Adds a callback that will be called after this transaction has been committed. If this transaction is an inner
+   * transaction, the callback will not be called until any outer transaction has also been committed.
+   * @param callback a callback to invoke. If this callback throws an exception, that exception will not abort the
+   *                 transaction, and it may or may not be thrown after commit. (This exception will be thrown unless
+   *                 some other transaction also throws an exception, in which case one exception will be thrown and
+   *                 the others will be marked as suppressed in that exception.)
+   */
+  void addPostCommitCallback(Runnable callback);
 }

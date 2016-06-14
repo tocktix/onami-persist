@@ -19,9 +19,14 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.base.Preconditions;
+
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,6 +48,11 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
   private final EntityManagerProvider emProvider;
 
   /**
+   * The outermost transaction facade associated with each thread, if any.
+   */
+  private final ThreadLocal<Outer> outerTransactionFacade = new ThreadLocal<>();
+
+  /**
    * Constructor.
    *
    * @param utFacade   the user transaction facade.
@@ -60,9 +70,11 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
   // @Override
   public TransactionFacade createTransactionFacade() {
     if (utFacade.isActive()) {
-      return new Inner(utFacade, emProvider.get());
+      return new Inner(utFacade, emProvider.get(), outerTransactionFacade.get());
     } else {
-      return new Outer(utFacade, emProvider.get());
+      Outer outer = new Outer(utFacade, emProvider.get());
+      outerTransactionFacade.set(outer);
+      return outer;
     }
   }
 
@@ -76,9 +88,12 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
 
     private final EntityManager em;
 
-    Inner(UserTransactionFacade txn, EntityManager em) {
+    private final TransactionFacade parent;
+
+    Inner(UserTransactionFacade txn, EntityManager em, @Nullable TransactionFacade parent) {
       this.txn = checkNotNull(txn, "txn is mandatory!");
       this.em = checkNotNull(em, "em is mandatory!");
+      this.parent = parent;
     }
 
     /**
@@ -104,6 +119,12 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
     public void rollback() {
       txn.setRollbackOnly();
     }
+
+    @Override
+    public void addPostCommitCallback(Runnable callback) {
+      Preconditions.checkNotNull(parent);
+      parent.addPostCommitCallback(callback);
+    }
   }
 
 
@@ -116,6 +137,8 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
     private final UserTransactionFacade txn;
 
     private final EntityManager em;
+
+    private final List<Runnable> postCommitCallbacks = new ArrayList<>();
 
     Outer(UserTransactionFacade txn, EntityManager em) {
       this.txn = checkNotNull(txn, "txn is mandatory!");
@@ -135,11 +158,24 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
      * {@inheritDoc}
      */
     // @Override
-    public void commit() {
+    public synchronized void commit() {
       if (txn.getRollbackOnly()) {
         txn.rollback();
       } else {
         txn.commit();
+        List<RuntimeException> exceptions = new ArrayList<>();
+        for (Runnable callback : postCommitCallbacks) {
+          try {
+            callback.run();
+          } catch (RuntimeException e) {
+            exceptions.add(e);
+          }
+        }
+        if (exceptions.size() >= 1) {
+          RuntimeException e = exceptions.get(0);
+          exceptions.subList(1, exceptions.size()).forEach(e::addSuppressed);
+          throw e;
+        }
       }
     }
 
@@ -149,6 +185,12 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
     // @Override
     public void rollback() {
       txn.rollback();
+    }
+
+    @Override
+    public synchronized void addPostCommitCallback(Runnable callback) {
+      Preconditions.checkState(txn.isActive(), "Cannot add a commit callback with no transaction active");
+      postCommitCallbacks.add(callback);
     }
   }
 

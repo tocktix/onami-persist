@@ -29,6 +29,7 @@ import org.mockito.InOrder;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -44,6 +45,8 @@ public class TxnInterceptorTest {
 
   private UnitOfWork unitOfWork;
 
+  private TransactionStateObserver transactionStateObserver;
+
   private TransactionalAnnotationHelper txnAnnotationHelper;
 
   private TransactionFacadeFactory tfProvider;
@@ -57,11 +60,12 @@ public class TxnInterceptorTest {
   @Before
   public void setUp() throws Exception {
     unitOfWork = mock(UnitOfWork.class);
+    transactionStateObserver = mock(TransactionStateObserver.class);
     tfProvider = mock(TransactionFacadeFactory.class);
     txnAnnotationHelper = mock(TransactionalAnnotationHelper.class);
 
     sut = new TxnInterceptor();
-    sut.init(unitOfWork, tfProvider, txnAnnotationHelper);
+    sut.init(unitOfWork, transactionStateObserver, tfProvider, txnAnnotationHelper);
 
     invocation = mock(MethodInvocation.class);
   }
@@ -104,7 +108,7 @@ public class TxnInterceptorTest {
       public void setup() {
         doReturn(false).when(unitOfWork)
             .isActive();
-        inOrder = inOrder(unitOfWork, invocation);
+        inOrder = inOrder(unitOfWork, invocation, transactionStateObserver);
       }
 
       @Test
@@ -113,6 +117,8 @@ public class TxnInterceptorTest {
 
         inOrder.verify(unitOfWork)
             .begin();
+        inOrder.verify(transactionStateObserver)
+            .withTransaction(any());
         inOrder.verify(invocation)
             .proceed();
         inOrder.verify(unitOfWork)
@@ -135,6 +141,8 @@ public class TxnInterceptorTest {
         catch (RuntimeException e) {
           inOrder.verify(unitOfWork)
               .begin();
+          inOrder.verify(transactionStateObserver)
+              .withTransaction(any());
           inOrder.verify(invocation)
               .proceed();
           inOrder.verify(unitOfWork)

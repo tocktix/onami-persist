@@ -19,9 +19,14 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.base.Preconditions;
+
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityTransaction;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,6 +40,8 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
    * The provider for the entity manager.
    */
   private final EntityManagerProvider emProvider;
+
+  private final ThreadLocal<Outer> outerTransactionFacade = new ThreadLocal<>();
 
   /**
    * Constructor.
@@ -54,9 +61,11 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
     final EntityTransaction txn = emProvider.get()
         .getTransaction();
     if (txn.isActive()) {
-      return new Inner(txn);
+      return new Inner(txn, outerTransactionFacade.get());
     } else {
-      return new Outer(txn);
+      Outer outer = new Outer(txn);
+      outerTransactionFacade.set(outer);
+      return outer;
     }
   }
 
@@ -68,8 +77,11 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
   private static class Inner implements TransactionFacade {
     private final EntityTransaction txn;
 
-    Inner(EntityTransaction txn) {
+    private final TransactionFacade parent;
+
+    Inner(EntityTransaction txn, @Nullable TransactionFacade parent) {
       this.txn = checkNotNull(txn, "txn is mandatory!");
+      this.parent = parent;
     }
 
     /**
@@ -95,6 +107,12 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
     public void rollback() {
       txn.setRollbackOnly();
     }
+
+    @Override
+    public void addPostCommitCallback(Runnable callback) {
+      Preconditions.checkNotNull(parent);
+      parent.addPostCommitCallback(callback);
+    }
   }
 
 
@@ -105,6 +123,8 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
    */
   private static class Outer implements TransactionFacade {
     private final EntityTransaction txn;
+
+    private final List<Runnable> postCommitCallbacks = new ArrayList<>();
 
     /**
      * {@inheritDoc}
@@ -125,11 +145,24 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
      * {@inheritDoc}
      */
     // @Override
-    public void commit() {
+    public synchronized void commit() {
       if (txn.getRollbackOnly()) {
         txn.rollback();
       } else {
         txn.commit();
+        List<RuntimeException> exceptions = new ArrayList<>();
+        for (Runnable callback : postCommitCallbacks) {
+          try {
+            callback.run();
+          } catch (RuntimeException e) {
+            exceptions.add(e);
+          }
+        }
+        if (exceptions.size() >= 1) {
+          RuntimeException e = exceptions.get(0);
+          exceptions.subList(1, exceptions.size()).forEach(e::addSuppressed);
+          throw e;
+        }
       }
     }
 
@@ -139,6 +172,12 @@ class ResourceLocalTransactionFacadeFactory implements TransactionFacadeFactory 
     // @Override
     public void rollback() {
       txn.rollback();
+    }
+
+    @Override
+    public synchronized void addPostCommitCallback(Runnable callback) {
+      Preconditions.checkState(txn.isActive(), "Cannot add a commit callback with no transaction active");
+      postCommitCallbacks.add(callback);
     }
   }
 

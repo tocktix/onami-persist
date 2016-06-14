@@ -37,6 +37,8 @@ import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRolling
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingNone;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingRuntimeTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingTestException;
+
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskThatUpdatesSpyValueWithPostCommitHook;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -46,7 +48,9 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -61,7 +65,7 @@ public class NestedTransactionTest {
    * All possible combination of {@link org.apache.onami.persist.test.transaction.testframework.TransactionalTask}s
    * and if they should have been rolled back.
    */
-  private static final Collection<TestVector> TEST_VECTORS = buildTestVectors(
+  private final Collection<TestVector> TEST_VECTORS = buildTestVectors(
       whenFirstTaskIs(TaskRollingBackOnAnyThrowingNone.class) //                                                  //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //
@@ -74,7 +78,8 @@ public class NestedTransactionTest {
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnAnyThrowingRuntimeTestException.class) //                                  //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -88,7 +93,8 @@ public class NestedTransactionTest {
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectRollbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnAnyThrowingTestException.class) //                                         //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -102,7 +108,8 @@ public class NestedTransactionTest {
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectRollbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnNoneThrowingNone.class) //                                                 //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -116,7 +123,8 @@ public class NestedTransactionTest {
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnNoneThrowingRuntimeTestException.class) //                                 //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -130,7 +138,8 @@ public class NestedTransactionTest {
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnNoneThrowingTestException.class) //                                        //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -144,7 +153,8 @@ public class NestedTransactionTest {
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingNone.class) //                                 //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -158,7 +168,8 @@ public class NestedTransactionTest {
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException.class) //                 //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -172,7 +183,8 @@ public class NestedTransactionTest {
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectRollbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //                        //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -186,7 +198,8 @@ public class NestedTransactionTest {
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //                                        //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -200,7 +213,8 @@ public class NestedTransactionTest {
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //                        //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -214,7 +228,8 @@ public class NestedTransactionTest {
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class), //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectCommitAndCallbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class), //
 
       whenFirstTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class) //                               //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnAnyThrowingNone.class) //
@@ -228,7 +243,8 @@ public class NestedTransactionTest {
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnRuntimeTestExceptionThrowingTestException.class) //
           .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingNone.class) //
           .expectCommitWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingRuntimeTestException.class) //
-          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class) //
+          .expectRollbackWhenSecondTaskIs(TaskRollingBackOnTestExceptionThrowingTestException.class)
+          .expectRollbackWhenSecondTaskIs(TaskThatUpdatesSpyValueWithPostCommitHook.class)
   );
 
 
@@ -241,7 +257,7 @@ public class NestedTransactionTest {
 
     s.addAll(TEST_VECTORS);
 
-    assertThat(s.size(), is(12 * 12));
+    assertThat(s.size(), is(12 * 13));
   }
 
   /**
@@ -264,8 +280,10 @@ public class NestedTransactionTest {
   }
 
   private void doTestNestedTransaction(TestVector testVector) {
+    testVector.init();
     final PersistenceModule pm = createPersistenceModuleForTest();
-    final Injector injector = Guice.createInjector(pm);
+    final SpyModule spyModule = new SpyModule(testVector.getSpyBox());
+    final Injector injector = Guice.createInjector(pm, spyModule);
     final PersistenceService persistService = injector.getInstance(PersistenceService.class);
     persistService.start();
     try {
@@ -306,7 +324,7 @@ public class NestedTransactionTest {
     return result;
   }
 
-  private static TestVectorsBuilder whenFirstTaskIs(Class<? extends TransactionalTask> firstTask) {
+  private TestVectorsBuilder whenFirstTaskIs(Class<? extends TransactionalTask> firstTask) {
     return new TestVectorsBuilder(firstTask);
   }
 
@@ -315,9 +333,15 @@ public class NestedTransactionTest {
 
     private final Class<? extends TransactionalTask> innerTask;
 
+    private SpyBox spyBox;
+
     public TestVector(Class<? extends TransactionalTask> outerTask, Class<? extends TransactionalTask> innerTask) {
       this.outerTask = outerTask;
       this.innerTask = innerTask;
+    }
+
+    public void init() {
+      spyBox = new SpyBox();
     }
 
     public void scheduleOuterTaskOn(TransactionalWorker worker) {
@@ -326,6 +350,10 @@ public class NestedTransactionTest {
 
     public void scheduleInnerTaskOn(TransactionalWorker worker) {
       worker.scheduleTask(innerTask);
+    }
+
+    protected SpyBox getSpyBox() {
+      return spyBox;
     }
 
     public abstract void assertExpectedOutcomeFor(TransactionalWorker worker);
@@ -356,9 +384,9 @@ public class NestedTransactionTest {
     @Override
     public void assertExpectedOutcomeFor(TransactionalWorker worker) {
       worker.assertNoEntityHasBeenPersisted();
+      assertFalse(getSpyBox().getValue());
     }
   }
-
 
   private static class CommittingTestVector extends TestVector {
 
@@ -370,11 +398,25 @@ public class NestedTransactionTest {
     @Override
     public void assertExpectedOutcomeFor(TransactionalWorker worker) {
       worker.assertAllEntitiesHaveBeenPersisted();
+      assertFalse(getSpyBox().getValue());
     }
   }
 
+  private static class CommittingAndCallbackCalledTestVector extends TestVector {
 
-  private static class TestVectorsBuilder {
+    public CommittingAndCallbackCalledTestVector(Class<? extends TransactionalTask> outerTask,
+        Class<? extends TransactionalTask> innerTask) {
+      super(outerTask, innerTask);
+    }
+
+    @Override
+    public void assertExpectedOutcomeFor(TransactionalWorker worker) {
+      worker.assertAllEntitiesHaveBeenPersisted();
+      assertTrue(getSpyBox().getValue());
+    }
+  }
+
+  private class TestVectorsBuilder {
 
     private final Class<? extends TransactionalTask> firstTask;
 
@@ -387,6 +429,11 @@ public class NestedTransactionTest {
 
     public TestVectorsBuilder expectCommitWhenSecondTaskIs(Class<? extends TransactionalTask> secondTask) {
       result.add(new CommittingTestVector(firstTask, secondTask));
+      return this;
+    }
+
+    public TestVectorsBuilder expectCommitAndCallbackWhenSecondTaskIs(Class<? extends TransactionalTask> secondTask) {
+      result.add(new CommittingAndCallbackCalledTestVector(firstTask, secondTask));
       return this;
     }
 
