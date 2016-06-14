@@ -48,7 +48,7 @@ public class TransactionalWorker {
 
   private final TransactionalTasks tasks = new TransactionalTasks();
 
-  private final List<TestEntity> storedEntities = new ArrayList<TestEntity>();
+  private final List<TestEntity> storedEntities = new ArrayList<>();
 
   @Inject
   private Injector injector;
@@ -150,7 +150,7 @@ public class TransactionalWorker {
    */
   private static class TransactionalTasks {
 
-    private final List<TransactionalTask> tasks = new ArrayList<TransactionalTask>();
+    private final List<TransactionalTask> tasks = new ArrayList<>();
 
     private int pos = 0;
 

@@ -46,7 +46,7 @@ public abstract class TransactionalTask {
 
   private TransactionalWorker worker;
 
-  private final List<TestEntity> persistedEntities = new ArrayList<TestEntity>();
+  private final List<TestEntity> persistedEntities = new ArrayList<>();
 
   /**
    * Should 'try to' create entities in the persistent storage (i.e. DB).

@@ -52,7 +52,7 @@ public abstract class PersistenceModule extends AbstractModule {
       throw new RuntimeException("cannot reenter the configure method");
     }
     try {
-      configurations = new ArrayList<PersistenceUnitModuleConfiguration>();
+      configurations = new ArrayList<>();
       configurePersistenceUnits();
     } finally {
       configurations = null;

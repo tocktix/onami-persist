@@ -47,7 +47,7 @@ class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork {
   /**
    * Thread local store of {@link EntityManager}s.
    */
-  private final ThreadLocal<EntityManager> entityManagers = new ThreadLocal<EntityManager>();
+  private final ThreadLocal<EntityManager> entityManagers = new ThreadLocal<>();
 
   /**
    * Constructor.

@@ -29,7 +29,7 @@ import java.util.Hashtable;
  */
 public class InitialContextFactoryStub implements InitialContextFactory {
 
-  private static final ThreadLocal<Context> THREAD_LOCAL_CONTEXT = new ThreadLocal<Context>();
+  private static final ThreadLocal<Context> THREAD_LOCAL_CONTEXT = new ThreadLocal<>();
 
   static {
     System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextFactoryStub.class.getName());

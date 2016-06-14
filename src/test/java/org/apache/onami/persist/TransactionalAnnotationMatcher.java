@@ -64,9 +64,9 @@ public final class TransactionalAnnotationMatcher extends BaseMatcher<Transactio
 
   private <T> Set<T> asSet(T... elements) {
     if (elements == null) {
-      return new HashSet<T>();
+      return new HashSet<>();
     }
-    return new HashSet<T>(Arrays.asList(elements));
+    return new HashSet<>(Arrays.asList(elements));
   }
 
   public void describeTo(Description description) {

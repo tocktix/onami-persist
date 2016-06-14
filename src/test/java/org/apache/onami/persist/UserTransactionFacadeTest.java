@@ -261,7 +261,7 @@ public class UserTransactionFacadeTest {
   }
 
   private Matcher<Long> greaterThan(long expected) {
-    return new GreaterThan<Long>(expected);
+    return new GreaterThan<>(expected);
   }
 
 }

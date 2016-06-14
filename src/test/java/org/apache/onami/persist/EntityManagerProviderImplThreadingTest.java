@@ -21,8 +21,6 @@ package org.apache.onami.persist;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -60,25 +58,19 @@ public class EntityManagerProviderImplThreadingTest {
     doReturn(emf).when(emfProvider)
         .get();
 
-    doAnswer(new Answer() {
-      public Object answer(InvocationOnMock invocation) throws Throwable {
-        return mock(EntityManager.class);
-      }
-    }).when(emf)
+    doAnswer(invocation -> mock(EntityManager.class)).when(emf)
         .createEntityManager();
   }
 
   @Test
   public void beginShouldBeCallableFromMultipleThreads() {
     for (int i = 0; i < 5; i++) {
-      new Thread(new Runnable() {
-        public void run() {
-          assertThat(sut.isActive(), is(false));
+      new Thread(() -> {
+        assertThat(sut.isActive(), is(false));
 
-          sut.begin();
+        sut.begin();
 
-          assertThat(sut.isActive(), is(true));
-        }
+        assertThat(sut.isActive(), is(true));
       }).start();
     }
   }
@@ -88,21 +80,19 @@ public class EntityManagerProviderImplThreadingTest {
     final int numThreads = 5;
     final CountDownLatch latch = new CountDownLatch(numThreads);
     for (int i = 0; i < numThreads; i++) {
-      new Thread(new Runnable() {
-        public void run() {
-          sut.begin();
+      new Thread(() -> {
+        sut.begin();
 
-          final EntityManager em1 = sut.get();
-          final EntityManager em2 = sut.get();
-          final EntityManager em3 = sut.get();
-          final EntityManager em4 = sut.get();
+        final EntityManager em1 = sut.get();
+        final EntityManager em2 = sut.get();
+        final EntityManager em3 = sut.get();
+        final EntityManager em4 = sut.get();
 
-          latch.countDown();
+        latch.countDown();
 
-          assertTrue(em1 == em2);
-          assertTrue(em1 == em3);
-          assertTrue(em1 == em4);
-        }
+        assertTrue(em1 == em2);
+        assertTrue(em1 == em3);
+        assertTrue(em1 == em4);
       }).start();
     }
 

@@ -42,22 +42,22 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
   /**
    * Collection of all known persistence services.
    */
-  private final List<PersistenceService> persistenceServices = new ArrayList<PersistenceService>();
+  private final List<PersistenceService> persistenceServices = new ArrayList<>();
 
   /**
    * Collection of all known units of work.
    */
-  private final List<UnitOfWork> unitsOfWork = new ArrayList<UnitOfWork>();
+  private final List<UnitOfWork> unitsOfWork = new ArrayList<>();
 
   /**
    * Collection of the keys of all known persistence services.
    */
-  private final Set<Key<PersistenceService>> persistenceServiceKeys = new HashSet<Key<PersistenceService>>();
+  private final Set<Key<PersistenceService>> persistenceServiceKeys = new HashSet<>();
 
   /**
    * Collection of the keys of of all known units of work.
    */
-  private final Set<Key<UnitOfWork>> unitOfWorkKeys = new HashSet<Key<UnitOfWork>>();
+  private final Set<Key<UnitOfWork>> unitOfWorkKeys = new HashSet<>();
 
   /**
    * Adds a persistence service and a unit of work to this collection.

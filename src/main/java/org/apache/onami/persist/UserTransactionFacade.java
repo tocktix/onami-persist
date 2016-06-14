@@ -44,8 +44,7 @@ class UserTransactionFacade {
   /**
    * Transaction states in which only a rollback is possible
    */
-  private static final Set<Integer> ROLLBACK_ONLY_STATES = new HashSet<Integer>(
-      Arrays.asList(Status.STATUS_MARKED_ROLLBACK, Status.STATUS_ROLLING_BACK, Status.STATUS_ROLLEDBACK));
+  private static final Set<Integer> ROLLBACK_ONLY_STATES = new HashSet<>(Arrays.asList(Status.STATUS_MARKED_ROLLBACK, Status.STATUS_ROLLING_BACK, Status.STATUS_ROLLEDBACK));
 
   /**
    * The wrapped user transaction.

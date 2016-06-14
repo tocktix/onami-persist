@@ -40,7 +40,7 @@ class AggregatedException extends RuntimeException {
     /**
      * list of causes for the aggregated exception.
      */
-    private List<Throwable> causes = new ArrayList<Throwable>();
+    private List<Throwable> causes = new ArrayList<>();
 
     /**
      * Adds an exception to the list of aggregated exceptions.

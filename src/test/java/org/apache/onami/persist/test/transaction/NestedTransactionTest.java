@@ -237,7 +237,7 @@ public class NestedTransactionTest {
    */
   @Test
   public void testVectorShouldContainAllCombinations() {
-    Set<TestVector> s = new HashSet<TestVector>();
+    Set<TestVector> s = new HashSet<>();
 
     s.addAll(TEST_VECTORS);
 
@@ -299,7 +299,7 @@ public class NestedTransactionTest {
 
 
   private static Collection<TestVector> buildTestVectors(TestVectorsBuilder... factories) {
-    final List<TestVector> result = new ArrayList<TestVector>();
+    final List<TestVector> result = new ArrayList<>();
     for (TestVectorsBuilder factory : factories) {
       result.addAll(factory.buildTestVectors());
     }
@@ -382,7 +382,7 @@ public class NestedTransactionTest {
 
     public TestVectorsBuilder(Class<? extends TransactionalTask> firstTask) {
       this.firstTask = firstTask;
-      this.result = new ArrayList<TestVector>();
+      this.result = new ArrayList<>();
     }
 
     public TestVectorsBuilder expectCommitWhenSecondTaskIs(Class<? extends TransactionalTask> secondTask) {
