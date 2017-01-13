@@ -17,7 +17,6 @@ public class SpyBox implements StatefulTransactionHook {
     return postCommit;
   }
 
-
   @Override
   public void preCommit() {
     preCommit = true;
