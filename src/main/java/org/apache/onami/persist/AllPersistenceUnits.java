@@ -19,6 +19,8 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.inject.Injector;
 import com.google.inject.Key;
 
@@ -28,10 +30,13 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * All persistence units. This is a convenience wrapper for multiple persistence units.
@@ -86,15 +91,32 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
   // @Override
   public void startAllStoppedPersistenceServices() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
+    Queue<Exception> exceptions = new ConcurrentLinkedQueue<>();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    List<Future<Boolean>> futures = new ArrayList<>();
     for (PersistenceService ps : persistenceServices) {
-      try {
-        if (!ps.isRunning()) {
-          ps.start();
+      Future<Boolean> future = executorService.submit(() -> {
+        try {
+          if (!ps.isRunning()) {
+            ps.start();
+          }
+        } catch (Exception e) {
+          exceptions.add(e);
         }
-      } catch (Exception e) {
-        exceptionBuilder.add(e);
-      }
+        return true;
+      });
+      futures.add(future);
     }
+
+    futures.forEach(future -> {
+      try {
+        future.get();
+      } catch (Exception e) {
+        exceptions.add(e);
+      }
+    });
+
+    exceptions.forEach(exceptionBuilder::add);
     exceptionBuilder.throwRuntimeExceptionIfHasCauses(
         "multiple exception occurred while starting the persistence service");
   }
