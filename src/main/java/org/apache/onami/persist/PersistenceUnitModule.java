@@ -154,7 +154,7 @@ class PersistenceUnitModule extends PrivateModule {
     bind(PersistenceService.class).to(ApplicationManagedEntityManagerFactoryProvider.class);
     bind(EntityManagerFactoryProvider.class).to(ApplicationManagedEntityManagerFactoryProvider.class);
     bind(Properties.class).annotatedWith(ForContainerManaged.class)
-        .toProvider(Providers.<Properties>of(null));
+        .toProvider(Providers.of(new Properties()));
     bind(Properties.class).annotatedWith(ForApplicationManaged.class)
         .toProvider(Providers.of(config.getProperties()));
 
@@ -171,7 +171,7 @@ class PersistenceUnitModule extends PrivateModule {
     bind(Properties.class).annotatedWith(ForContainerManaged.class)
         .toProvider(Providers.of(config.getProperties()));
     bind(Properties.class).annotatedWith(ForApplicationManaged.class)
-        .toProvider(Providers.<Properties>of(null));
+        .toProvider(Providers.of(new Properties()));
 
     // required in ContainerManagedEntityManagerFactoryProvider
     bindEntityManagerFactorySource();
