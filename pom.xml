@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>org.apache.onami.persist</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Apache Onami Persistence</name>
@@ -123,7 +123,12 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>19.0</version>
+      <version>25.0-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.4.0-b180725.0427</version>
     </dependency>
   </dependencies>
   <build>
