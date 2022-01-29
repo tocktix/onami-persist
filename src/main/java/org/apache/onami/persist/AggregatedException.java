@@ -19,10 +19,13 @@ package org.apache.onami.persist;
  * under the License.
  */
 
+import com.google.common.base.Throwables;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -104,6 +107,16 @@ class AggregatedException extends RuntimeException {
     super(message);
     this.causes = causes;
     this.numCauses = this.causes.length;
+  }
+
+  @Override
+  public String getMessage() {
+    return "%s%n[%n%s%n]".formatted(
+      super.getMessage(),
+      Arrays.asList(getCauses())
+        .stream()
+        .map(Throwables::getStackTraceAsString)
+        .collect(Collectors.joining("\n")));
   }
 
   /**
