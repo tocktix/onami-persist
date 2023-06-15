@@ -38,36 +38,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-/**
- * All persistence units. This is a convenience wrapper for multiple persistence units.
- */
+/** All persistence units. This is a convenience wrapper for multiple persistence units. */
 @Singleton
 class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
 
-  /**
-   * Collection of all known persistence services.
-   */
+  /** Collection of all known persistence services. */
   private final List<PersistenceService> persistenceServices = new ArrayList<>();
 
-  /**
-   * Collection of all known units of work.
-   */
+  /** Collection of all known units of work. */
   private final List<UnitOfWork> unitsOfWork = new ArrayList<>();
 
-  /**
-   * Collection of the keys of all known persistence services.
-   */
+  /** Collection of the keys of all known persistence services. */
   private final Set<Key<PersistenceService>> persistenceServiceKeys = new HashSet<>();
 
-  /**
-   * Collection of the keys of of all known units of work.
-   */
+  /** Collection of the keys of of all known units of work. */
   private final Set<Key<UnitOfWork>> unitOfWorkKeys = new HashSet<>();
 
   /**
    * Adds a persistence service and a unit of work to this collection.
    *
-   * @param psKey  the persistence service to add. Must not be {@code null}.
+   * @param psKey the persistence service to add. Must not be {@code null}.
    * @param uowKey the unit of work to add. Must not be {@code null}.
    */
   void add(Key<PersistenceService> psKey, Key<UnitOfWork> uowKey) {
@@ -85,45 +75,48 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   // @Override
   public void startAllStoppedPersistenceServices() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
     Queue<Exception> exceptions = new ConcurrentLinkedQueue<>();
     ExecutorService executorService = Executors.newCachedThreadPool();
-    List<Future<Boolean>> futures = new ArrayList<>();
-    for (PersistenceService ps : persistenceServices) {
-      Future<Boolean> future = executorService.submit(() -> {
-        try {
-          if (!ps.isRunning()) {
-            ps.start();
-          }
-        } catch (Exception e) {
-          exceptions.add(e);
-        }
-        return true;
-      });
-      futures.add(future);
-    }
-
-    futures.forEach(future -> {
-      try {
-        future.get();
-      } catch (Exception e) {
-        exceptions.add(e);
+    try {
+      List<Future<Boolean>> futures = new ArrayList<>();
+      for (PersistenceService ps : persistenceServices) {
+        Future<Boolean> future =
+            executorService.submit(
+                () -> {
+                  try {
+                    if (!ps.isRunning()) {
+                      ps.start();
+                    }
+                  } catch (Exception e) {
+                    exceptions.add(e);
+                  }
+                  return true;
+                });
+        futures.add(future);
       }
-    });
 
-    exceptions.forEach(exceptionBuilder::add);
-    exceptionBuilder.throwRuntimeExceptionIfHasCauses(
-        "multiple exception occurred while starting the persistence service");
+      futures.forEach(
+          future -> {
+            try {
+              future.get();
+            } catch (Exception e) {
+              exceptions.add(e);
+            }
+          });
+
+      exceptions.forEach(exceptionBuilder::add);
+      exceptionBuilder.throwRuntimeExceptionIfHasCauses(
+          "multiple exception occurred while starting the persistence service");
+    } finally {
+      executorService.shutdown();
+    }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   // @Override
   public void stopAllPersistenceServices() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
@@ -138,9 +131,7 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
         "multiple exception occurred while stopping the persistence service");
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   // @Override
   public void beginAllUnitsOfWork() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
@@ -151,12 +142,11 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
         exceptionBuilder.add(e);
       }
     }
-    exceptionBuilder.throwRuntimeExceptionIfHasCauses("multiple exception occurred while starting the unit of work");
+    exceptionBuilder.throwRuntimeExceptionIfHasCauses(
+        "multiple exception occurred while starting the unit of work");
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   // @Override
   public void beginAllInactiveUnitsOfWork() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
@@ -169,12 +159,11 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
         exceptionBuilder.add(e);
       }
     }
-    exceptionBuilder.throwRuntimeExceptionIfHasCauses("multiple exception occurred while starting the unit of work");
+    exceptionBuilder.throwRuntimeExceptionIfHasCauses(
+        "multiple exception occurred while starting the unit of work");
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   // @Override
   public void endAllUnitsOfWork() {
     AggregatedException.Builder exceptionBuilder = new AggregatedException.Builder();
@@ -185,12 +174,11 @@ class AllPersistenceUnits implements AllPersistenceServices, AllUnitsOfWork {
         exceptionBuilder.add(e);
       }
     }
-    exceptionBuilder.throwRuntimeExceptionIfHasCauses("multiple exception occurred while ending the unit of work");
+    exceptionBuilder.throwRuntimeExceptionIfHasCauses(
+        "multiple exception occurred while ending the unit of work");
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   // @Override
   public List<EntityManager> getAllEntityManagers() {
     return unitsOfWork.stream().map(UnitOfWork::getEntityManager).collect(Collectors.toList());
