@@ -121,7 +121,7 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
     }
 
     @Override
-    public void addPostCommitCallback(Runnable callback) {
+    public void addPostCommitCallback(StatefulTransactionHook callback) {
       Preconditions.checkNotNull(parent);
       parent.addPostCommitCallback(callback);
     }
@@ -138,7 +138,7 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
 
     private final EntityManager em;
 
-    private final List<Runnable> postCommitCallbacks = new ArrayList<>();
+    private final List<StatefulTransactionHook> transactionHooks = new ArrayList<>();
 
     Outer(UserTransactionFacade txn, EntityManager em) {
       this.txn = checkNotNull(txn, "txn is mandatory!");
@@ -162,20 +162,35 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
       if (txn.getRollbackOnly()) {
         txn.rollback();
       } else {
-        txn.commit();
-        List<RuntimeException> exceptions = new ArrayList<>();
-        for (Runnable callback : postCommitCallbacks) {
+        List<RuntimeException> preCommitExceptions = new ArrayList<>();
+        for (StatefulTransactionHook callback : transactionHooks) {
           try {
-            callback.run();
+            callback.preCommit();
           } catch (RuntimeException e) {
-            exceptions.add(e);
+            preCommitExceptions.add(e);
           }
         }
-        if (exceptions.size() >= 1) {
-          RuntimeException e = exceptions.get(0);
-          exceptions.subList(1, exceptions.size()).forEach(e::addSuppressed);
-          throw e;
+        throwIfException(preCommitExceptions);
+
+        txn.commit();
+
+        List<RuntimeException> postCommitExceptions = new ArrayList<>();
+        for (StatefulTransactionHook callback : transactionHooks) {
+          try {
+            callback.postCommit();
+          } catch (RuntimeException e) {
+            postCommitExceptions.add(e);
+          }
         }
+        throwIfException(postCommitExceptions);
+      }
+    }
+
+    private void throwIfException(List<RuntimeException> exceptions) {
+      if (exceptions.size() >= 1) {
+        RuntimeException e = exceptions.get(0);
+        exceptions.subList(1, exceptions.size()).forEach(e::addSuppressed);
+        throw e;
       }
     }
 
@@ -188,9 +203,9 @@ class JtaTransactionFacadeFactory implements TransactionFacadeFactory {
     }
 
     @Override
-    public synchronized void addPostCommitCallback(Runnable callback) {
+    public synchronized void addPostCommitCallback(StatefulTransactionHook callback) {
       Preconditions.checkState(txn.isActive(), "Cannot add a commit callback with no transaction active");
-      postCommitCallbacks.add(callback);
+      transactionHooks.add(callback);
     }
   }
 

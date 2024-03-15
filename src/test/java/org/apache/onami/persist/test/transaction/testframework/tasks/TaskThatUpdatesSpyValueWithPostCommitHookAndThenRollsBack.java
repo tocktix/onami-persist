@@ -29,7 +29,7 @@ public class TaskThatUpdatesSpyValueWithPostCommitHookAndThenRollsBack extends T
   @Transactional(rollbackOn = TestException.class, onUnits = {})
   public void doTransactional() throws TestException, RuntimeTestException {
     storeEntity(new TestEntity());
-    transactionHookManager.addPostCommitCallback(spyValue::setToTrue);
+    transactionHookManager.addPostCommitCallback(spyValue);
     doOtherTasks();
     throw new TestException(getClass().getSimpleName());
   }
