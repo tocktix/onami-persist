@@ -22,8 +22,8 @@ package org.apache.onami.persist;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.concurrent.CountDownLatch;
 
 import static org.hamcrest.CoreMatchers.is;

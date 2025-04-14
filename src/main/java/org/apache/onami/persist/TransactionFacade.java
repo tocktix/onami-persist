@@ -22,7 +22,7 @@ package org.apache.onami.persist;
 
 /**
  * Interface which hides away the details of inner (nested) and outer transactions as well as the details between
- * {@link javax.persistence.EntityTransaction} and {@link javax.transaction.UserTransaction}.
+ * {@link jakarta.persistence.EntityTransaction} and {@link javax.transaction.UserTransaction}.
  */
 interface TransactionFacade {
 

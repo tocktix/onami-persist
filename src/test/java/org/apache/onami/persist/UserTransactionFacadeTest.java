@@ -20,6 +20,7 @@ package org.apache.onami.persist;
  */
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.matchers.GreaterThan;
@@ -261,7 +262,7 @@ public class UserTransactionFacadeTest {
   }
 
   private Matcher<Long> greaterThan(long expected) {
-    return new GreaterThan<>(expected);
+    return Matchers.greaterThan(expected);
   }
 
 }

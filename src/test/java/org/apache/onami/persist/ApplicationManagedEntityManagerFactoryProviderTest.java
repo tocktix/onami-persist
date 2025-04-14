@@ -22,7 +22,7 @@ package org.apache.onami.persist;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;

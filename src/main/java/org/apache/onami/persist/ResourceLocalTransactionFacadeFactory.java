@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
 

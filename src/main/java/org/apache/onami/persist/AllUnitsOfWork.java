@@ -20,7 +20,7 @@ package org.apache.onami.persist;
  */
 
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**

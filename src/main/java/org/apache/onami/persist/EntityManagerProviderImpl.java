@@ -24,8 +24,8 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork, TransactionStateObserver, TransactionHookManager {
 
   /**
-   * Provider for {@link javax.persistence.EntityManagerFactory}.
+   * Provider for {@link jakarta.persistence.EntityManagerFactory}.
    */
   private final EntityManagerFactoryProvider emfProvider;
 

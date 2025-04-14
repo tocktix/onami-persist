@@ -20,7 +20,7 @@ package org.apache.onami.persist;
  */
 
 import javax.inject.Provider;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * Provider for {@link EntityManager}.

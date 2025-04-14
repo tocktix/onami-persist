@@ -25,7 +25,7 @@ import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 import javax.inject.Provider;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 

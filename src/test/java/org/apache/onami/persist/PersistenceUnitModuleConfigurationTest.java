@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Provider;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 import java.lang.annotation.Annotation;
 import java.util.Properties;
