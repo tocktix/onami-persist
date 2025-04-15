@@ -21,9 +21,10 @@ package org.apache.onami.persist;
 
 import com.google.inject.Key;
 import com.google.inject.PrivateModule;
+import com.google.inject.Provides;
 import com.google.inject.util.Providers;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 import java.util.Properties;
 

@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Provider;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;

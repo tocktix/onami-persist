@@ -26,7 +26,7 @@ import org.apache.onami.persist.test.transaction.testframework.exceptions.Runtim
 import org.apache.onami.persist.test.transaction.testframework.exceptions.TestException;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 

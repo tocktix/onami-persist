@@ -21,7 +21,7 @@ package org.apache.onami.persist;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

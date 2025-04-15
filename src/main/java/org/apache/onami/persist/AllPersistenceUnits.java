@@ -26,7 +26,7 @@ import com.google.inject.Key;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

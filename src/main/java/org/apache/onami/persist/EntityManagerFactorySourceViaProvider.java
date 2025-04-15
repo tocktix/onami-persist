@@ -22,10 +22,10 @@ package org.apache.onami.persist;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
- * Source for {@link javax.persistence.EntityManagerFactory}.
+ * Source for {@link jakarta.persistence.EntityManagerFactory}.
  * The sourced instance is provided by guice.
  */
 @Singleton

@@ -19,8 +19,8 @@ package org.apache.onami.persist.test;
  * under the License.
  */
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.util.UUID;
 

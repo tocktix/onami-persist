@@ -19,7 +19,7 @@ package org.apache.onami.persist;
  * under the License.
  */
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * Source for {@link EntityManagerFactory}.

@@ -19,7 +19,7 @@ package org.apache.onami.persist;
  * under the License.
  */
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * The Unit of work correlates with the life cycle of the {@link EntityManager}.

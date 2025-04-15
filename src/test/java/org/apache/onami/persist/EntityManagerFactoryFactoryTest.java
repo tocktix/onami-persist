@@ -22,7 +22,7 @@ package org.apache.onami.persist;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -39,7 +39,7 @@ public class EntityManagerFactoryFactoryTest {
 
   private static final String PU_NAME = "testUnit";
 
-  private static final String PU_KEY = "hibernate.ejb.persistenceUnitName";
+  private static final String PU_KEY = "hibernate.persistenceUnitName";
 
   private EntityManagerFactoryFactory sut;
 
@@ -58,6 +58,7 @@ public class EntityManagerFactoryFactoryTest {
     // when
     final EntityManagerFactory result = sut.createApplicationManagedEntityManagerFactory();
     // then
+    System.out.println(result.getProperties());
     assertThat(result.getProperties()
         .get(PU_KEY), is((Object) PU_NAME));
     assertThat(result.getProperties()

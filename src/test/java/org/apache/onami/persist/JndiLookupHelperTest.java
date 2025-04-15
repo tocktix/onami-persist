@@ -24,7 +24,7 @@ import org.junit.Test;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
