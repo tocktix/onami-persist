@@ -384,7 +384,8 @@ public class NestedTransactionTest {
     @Override
     public void assertExpectedOutcomeFor(TransactionalWorker worker) {
       worker.assertNoEntityHasBeenPersisted();
-      assertFalse(getSpyBox().getValue());
+      assertFalse(getSpyBox().getPreCommit());
+      assertFalse(getSpyBox().getPostCommit());
     }
   }
 
@@ -398,7 +399,8 @@ public class NestedTransactionTest {
     @Override
     public void assertExpectedOutcomeFor(TransactionalWorker worker) {
       worker.assertAllEntitiesHaveBeenPersisted();
-      assertFalse(getSpyBox().getValue());
+      assertFalse(getSpyBox().getPreCommit());
+      assertFalse(getSpyBox().getPostCommit());
     }
   }
 
@@ -412,7 +414,8 @@ public class NestedTransactionTest {
     @Override
     public void assertExpectedOutcomeFor(TransactionalWorker worker) {
       worker.assertAllEntitiesHaveBeenPersisted();
-      assertTrue(getSpyBox().getValue());
+      assertTrue(getSpyBox().getPreCommit());
+      assertTrue(getSpyBox().getPostCommit());
     }
   }
 
