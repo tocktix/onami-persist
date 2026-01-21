@@ -19,8 +19,8 @@ package org.apache.onami.persist;
  * under the License.
  */
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManagerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;

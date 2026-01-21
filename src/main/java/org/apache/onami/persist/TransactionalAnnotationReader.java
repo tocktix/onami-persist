@@ -21,7 +21,7 @@ package org.apache.onami.persist;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 
 /**

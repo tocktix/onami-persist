@@ -8,7 +8,7 @@ import org.apache.onami.persist.test.transaction.testframework.TransactionalTask
 import org.apache.onami.persist.test.transaction.testframework.exceptions.RuntimeTestException;
 import org.apache.onami.persist.test.transaction.testframework.exceptions.TestException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class TaskThatUpdatesSpyValueWithPostCommitHook extends TransactionalTask {
 
