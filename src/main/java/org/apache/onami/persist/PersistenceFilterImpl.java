@@ -19,7 +19,7 @@ package org.apache.onami.persist;
  * under the License.
  */
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;

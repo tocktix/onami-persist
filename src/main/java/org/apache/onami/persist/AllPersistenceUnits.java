@@ -24,8 +24,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;

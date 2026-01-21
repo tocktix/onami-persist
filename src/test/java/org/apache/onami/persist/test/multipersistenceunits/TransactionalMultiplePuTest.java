@@ -25,7 +25,7 @@ import org.apache.onami.persist.test.TestEntity;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

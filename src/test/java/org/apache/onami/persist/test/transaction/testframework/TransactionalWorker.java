@@ -28,7 +28,7 @@ import org.apache.onami.persist.test.TestEntity;
 import org.apache.onami.persist.test.transaction.testframework.exceptions.RuntimeTestException;
 import org.apache.onami.persist.test.transaction.testframework.exceptions.TestException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

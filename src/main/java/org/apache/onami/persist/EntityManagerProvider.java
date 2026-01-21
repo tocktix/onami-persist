@@ -19,7 +19,7 @@ package org.apache.onami.persist;
  * under the License.
  */
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import jakarta.persistence.EntityManager;
 
 /**

@@ -22,7 +22,7 @@ package org.apache.onami.persist;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import jakarta.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 import java.lang.annotation.Annotation;

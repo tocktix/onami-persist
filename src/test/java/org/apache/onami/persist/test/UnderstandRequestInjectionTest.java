@@ -23,7 +23,7 @@ import com.google.inject.Guice;
 import com.google.inject.PrivateModule;
 import org.junit.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;

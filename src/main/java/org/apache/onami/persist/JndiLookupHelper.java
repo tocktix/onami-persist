@@ -21,7 +21,7 @@ package org.apache.onami.persist;
 
 import com.google.common.base.Preconditions;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
