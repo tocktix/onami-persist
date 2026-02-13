@@ -31,18 +31,13 @@ import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRolling
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnNoneThrowingRuntimeTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnNoneThrowingTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnRuntimeTestExceptionThrowingNone;
-import org.apache.onami.persist.test.transaction.testframework.tasks
-    .TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException;
-import org.apache.onami.persist.test.transaction.testframework.tasks
-    .TaskRollingBackOnRuntimeTestExceptionThrowingTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnRuntimeTestExceptionThrowingRuntimeTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnRuntimeTestExceptionThrowingTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingNone;
-import org.apache.onami.persist.test.transaction.testframework.tasks
-    .TaskRollingBackOnTestExceptionThrowingRuntimeTestException;
-import org.apache.onami.persist.test.transaction.testframework.tasks
-    .TaskRollingBackOnTestExceptionThrowingTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingRuntimeTestException;
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskRollingBackOnTestExceptionThrowingTestException;
 import org.apache.onami.persist.test.transaction.testframework.tasks.TaskThatUpdatesSpyValueWithPostCommitHook;
-import org.apache.onami.persist.test.transaction.testframework.tasks
-    .TaskThatUpdatesSpyValueWithPostCommitHookAndThenRollsBack;
+import org.apache.onami.persist.test.transaction.testframework.tasks.TaskThatUpdatesSpyValueWithPostCommitHookAndThenRollsBack;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -242,7 +237,8 @@ public class SingleTransactionTest {
     worker.scheduleTask(TaskThatUpdatesSpyValueWithPostCommitHook.class);
     worker.doTasks();
     worker.assertAllEntitiesHaveBeenPersisted();
-    assertTrue(spyValue.getValue());
+    assertTrue(spyValue.getPreCommit());
+    assertTrue(spyValue.getPostCommit());
   }
 
   @Test
@@ -250,7 +246,7 @@ public class SingleTransactionTest {
     worker.scheduleTask(TaskThatUpdatesSpyValueWithPostCommitHookAndThenRollsBack.class);
     worker.doTasks();
     worker.assertNoEntityHasBeenPersisted();
-    assertFalse(spyValue.getValue());
+    assertFalse(spyValue.getPreCommit());
+    assertFalse(spyValue.getPostCommit());
   }
-
 }

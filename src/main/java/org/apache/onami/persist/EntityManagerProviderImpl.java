@@ -133,7 +133,7 @@ class EntityManagerProviderImpl implements EntityManagerProvider, UnitOfWork, Tr
    * {@inheritDoc}
    */
   @Override
-  public void addPostCommitCallback(Runnable callback) {
+  public void addPostCommitCallback(StatefulTransactionHook callback) {
     TransactionFacade transactionFacade = transactionFacades.get();
     Preconditions.checkNotNull(transactionFacade, "Cannot add a callback outside the context of a transaction");
     transactionFacade.addPostCommitCallback(callback);

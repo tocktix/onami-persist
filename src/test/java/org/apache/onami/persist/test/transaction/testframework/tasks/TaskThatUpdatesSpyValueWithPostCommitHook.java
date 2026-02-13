@@ -29,7 +29,7 @@ public class TaskThatUpdatesSpyValueWithPostCommitHook extends TransactionalTask
   @Transactional(ignore = Exception.class, onUnits = {})
   public void doTransactional() throws TestException, RuntimeTestException {
     storeEntity(new TestEntity());
-    transactionHookManager.addPostCommitCallback(spyValue::setToTrue);
+    transactionHookManager.addPostCommitCallback(spyValue);
     doOtherTasks();
   }
 }
